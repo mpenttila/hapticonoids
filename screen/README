@@ -1,0 +1,14 @@
+See http://cornerstone.multitouch.fi/multitouch-cornerstone-c-programming/compilingides 
+for compiling guidelines on different platforms.
+
+On OSX see http://cornerstone.multitouch.fi/installing-os-x
+and do:
+qmake -spec macx-g++
+make
+
+Note that to get the background visible for this demo you'll have to run the app
+with the --background option (so the SDK will take care of loading the image).
+
+E.g.:
+./AirHockey --background air-hockey.png
+

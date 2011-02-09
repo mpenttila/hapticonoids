@@ -2,6 +2,7 @@ SOURCES += Main.cpp
 
 CONFIG += release
 CONFIG -= qt
+CONFIG -= app_bundle
 
 TARGET = AirHockey
 

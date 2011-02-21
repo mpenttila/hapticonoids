@@ -6,9 +6,8 @@ and do:
 qmake -spec macx-g++
 make
 
-Note that to get the background visible for this demo you'll have to run the app
-with the --background option (so the SDK will take care of loading the image).
+Needs Box2D to be installed.
 
-E.g.:
-./AirHockey --background air-hockey.png
+Run:
+./AirHockey
 

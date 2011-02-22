@@ -127,12 +127,23 @@ void GameWidget::checkScoring(){
 		char buffer[50];
 		sprintf(buffer, "%d    %d", leftScore, rightScore);
 		scorewidget->setText(buffer);
-		puck->setCenterLocation(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f));
-		for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
-			if((Widget*)it->first == puck){
+	}
+	// Restore all lost widgets to table
+	for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
+		Widget * w = (Widget*)it->first;
+		Nimble::Vector2 pos = w->mapToParent(0.5f * w->size());
+		if((pos.x <= 0) || (pos.x >= size().maximum()))
+		{
+			if((Widget*)it->first == puck){	
 				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
-				it->second->SetLinearVelocity(b2Vec2(0,0));
 			}
+			else if((Widget*)it->first == mallet1){
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.1f, size().minimum() * 0.5f)), 0);
+			}
+			else if((Widget*)it->first == mallet2){
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.9f, size().minimum() * 0.5f)), 0);
+			}
+			it->second->SetLinearVelocity(b2Vec2(0,0));
 		}
 	}
 }

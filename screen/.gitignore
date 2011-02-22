@@ -1,0 +1,4 @@
+*.o
+AirHockey
+Makefile
+.imagecache

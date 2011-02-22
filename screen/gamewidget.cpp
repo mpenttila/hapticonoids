@@ -8,7 +8,9 @@
 
 GameWidget::GameWidget(MultiWidgets::Widget * parent) :
   MultiWidgets::ImageWidget(parent),
-  m_world(b2Vec2(0,0), true)
+  m_world(b2Vec2(0,0), true),
+  leftScore(0),
+  rightScore(0)
 {
   setCSSType("GameWidget");
   w = h = 0;
@@ -46,8 +48,8 @@ void GameWidget::ensureWidgetsHaveBodies() {
 		fixtureDef.density = 10.0f;
 	  }
 	  else{
-		fixtureDef.friction = 0.99f;
-		fixtureDef.restitution = 0.0f;
+		fixtureDef.friction = 1.0f;
+		fixtureDef.restitution = 0.5f;
 		fixtureDef.density = 100.0f;
 	  }
 	
@@ -72,12 +74,26 @@ void GameWidget::ensureGroundInitialized() {
     groundDef.position.Set(c.x, c.y);
     groundBody = m_world.CreateBody(&groundDef);
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(border, c.y + border, b2Vec2(-c.x, 0.0f), 0.0f);
+    // Left
+    //groundBox.SetAsBox(border, c.y + border, b2Vec2(-c.x, 0.0f), 0.0f);
+    // Left upper
+    groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(-c.x, -c.y * 0.7f), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
+    // Left bottom
+    groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(-c.x, c.y * 0.7f), 0.0f);
+    groundBody->CreateFixture(&groundBox, 0.0f);
+    // Bottom
     groundBox.SetAsBox(c.x, border, b2Vec2(0.0f, c.y), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
-    groundBox.SetAsBox(border, c.y + border, b2Vec2(c.x, 0.0f), 0.0f);
+    // Right
+    //groundBox.SetAsBox(border, c.y + border, b2Vec2(c.x, 0.0f), 0.0f);
+    // Right upper
+    groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(c.x, -c.y * 0.7f), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
+    // Right bottom
+    groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(c.x, c.y * 0.7f), 0.0f);
+    groundBody->CreateFixture(&groundBox, 0.0f);
+    // Top
     groundBox.SetAsBox(c.x, border, b2Vec2(0.0f, -c.y), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
   }
@@ -94,6 +110,33 @@ void GameWidget::updateBodiesToWidgets() {
   }
 }
 
+void GameWidget::checkScoring(){
+	Nimble::Vector2 center = puck->mapToParent(0.5f * puck->size());
+	bool scored = false;
+	if(center.x <= 0){
+		// Right player scores
+		rightScore++;
+		scored = true;
+	}
+	else if(center.x >= size().maximum()){
+		// Left player scores
+		leftScore++;
+		scored = true;
+	}
+	if(scored){
+		char buffer[50];
+		sprintf(buffer, "%d    %d", leftScore, rightScore);
+		scorewidget->setText(buffer);
+		puck->setCenterLocation(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f));
+		for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
+			if((Widget*)it->first == puck){
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
+				it->second->SetLinearVelocity(b2Vec2(0,0));
+			}
+		}
+	}
+}
+
 void GameWidget::update(float dt)
 {
   MultiWidgets::Widget::update(dt);
@@ -103,7 +146,8 @@ void GameWidget::update(float dt)
 
   updateBodiesToWidgets();
 
-  scorewidget->setText(std::string("5   2"));
+  // Check scoring
+  checkScoring();
 
 }
 

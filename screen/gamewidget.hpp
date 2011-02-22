@@ -28,6 +28,7 @@ public:
   void ensureWidgetsHaveBodies();
   void ensureGroundInitialized();
   void updateBodiesToWidgets();
+  void checkScoring();
 
   void input(MultiWidgets::GrabManager & gm, float dt);
 
@@ -46,6 +47,9 @@ public:
   std::map<long, b2MouseJoint*> m_fingerjoints;
 
   MultiWidgets::TextBox * scorewidget;
+
+  int leftScore;
+  int rightScore;
 
 };
 

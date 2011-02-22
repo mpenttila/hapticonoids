@@ -60,7 +60,7 @@ int main(int argc, char ** argv)
   
   float mallet1_horizontal = app.size().maximum() * 0.1f;
   float mallet2_horizontal = app.size().maximum() * 0.9f;
-  float puck_horizontal = app.size().maximum() * 0.45f;
+  float puck_horizontal = app.size().maximum() * 0.5f;
 
    // Create image widgets:
    MalletWidget * mallet1 =
@@ -81,8 +81,8 @@ int main(int argc, char ** argv)
      mallet1->resizeToFit(Nimble::Vector2(malletsize, malletsize));
      mallet2->resizeToFit(Nimble::Vector2(malletsize, malletsize));
      // Set location
-     mallet1->setLocation(Nimble::Vector2(mallet1_horizontal, vertical_middle));
-     mallet2->setLocation(Nimble::Vector2(mallet2_horizontal, vertical_middle));
+     mallet1->setCenterLocation(Nimble::Vector2(mallet1_horizontal, vertical_middle));
+     mallet2->setCenterLocation(Nimble::Vector2(mallet2_horizontal, vertical_middle));
      /* Make the image widgets stay inside the parent widget. */
      mallet1->addOperator(new MultiWidgets::StayInsideParentOperator());
      mallet2->addOperator(new MultiWidgets::StayInsideParentOperator());
@@ -102,9 +102,9 @@ int main(int argc, char ** argv)
      // Resize the Widget:
      puck->resizeToFit(Nimble::Vector2(pucksize, pucksize));
      // Set location
-     puck->setLocation(Nimble::Vector2(puck_horizontal, vertical_middle));
+     puck->setCenterLocation(Nimble::Vector2(puck_horizontal, vertical_middle));
      /* Make the image widget stay inside the parent widget. */
-     puck->addOperator(new MultiWidgets::StayInsideParentOperator());
+     //puck->addOperator(new MultiWidgets::StayInsideParentOperator());
      gw->addChild(puck);
 	 gw->puck = puck; 
    }
@@ -116,7 +116,7 @@ int main(int argc, char ** argv)
    gw->scorewidget = new MultiWidgets::TextBox(app.root(), 0, MultiWidgets::TextBox::HCENTER);
    gw->scorewidget->setStyle(app.style());
    gw->scorewidget->setText(std::string("0    0"));
-   int scorewidth = gw->scorewidget->totalTextAdvance() + 10;
+   int scorewidth = gw->scorewidget->totalTextAdvance() + 100;
    gw->scorewidget->setWidth(scorewidth);
    gw->scorewidget->setInputTransparent(true);
    gw->scorewidget->setColor(0, 0, 0, 0);

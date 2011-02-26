@@ -1,0 +1,13 @@
+See http://cornerstone.multitouch.fi/multitouch-cornerstone-c-programming/compilingides 
+for compiling guidelines on different platforms.
+
+On OSX see http://cornerstone.multitouch.fi/installing-os-x
+and do:
+qmake -spec macx-g++
+make
+
+Needs Box2D to be installed.
+
+Run:
+./AirHockey
+

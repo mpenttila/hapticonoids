@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothClass.Device;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -54,6 +55,7 @@ public class BluetoothClient extends Thread {
             		try {
             			//UUID tmp = UUID.fromString("1998ea20-cfca-4619-837d-b36b04fde3d5");            			
             			UUID tmp = UUID.fromString("20ea9819-1946-cacf-6bb3-7d83d5e3fd04");
+            			System.out.println("UUID: "+tmp.toString());
             			this.game = device.createRfcommSocketToServiceRecord(tmp);
             			this.game.connect();
                         this.btIn = this.game.getInputStream();

@@ -1,4 +1,4 @@
-SOURCES += Main.cpp gamewidget.cpp malletwidget.cpp puckwidget.cpp contactlistener.cpp
+SOURCES += Main.cpp gamewidget.cpp malletwidget.cpp puckwidget.cpp contactlistener.cpp hapticfeedback.cpp
 
 CONFIG += release
 CONFIG -= qt
@@ -19,7 +19,7 @@ macx {
 }
 
 linux-* {
-  LIBS += -lMultiWidgets -lRadiant -lLuminous -lPoetic -lValuable -lFluffy -lResonant -lNimble -lMultiStateDisplay -lVideoDisplay -lMultiTouch -lScreenplay -lPatterns -lBox2D
+  LIBS += -lMultiWidgets -lRadiant -lLuminous -lPoetic -lValuable -lFluffy -lResonant -lNimble -lMultiStateDisplay -lVideoDisplay -lMultiTouch -lScreenplay -lPatterns -lBox2D -lbluetooth
 }
 
 win* {

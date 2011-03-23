@@ -2,9 +2,13 @@
 #include <iostream>
  
 ContactListener::ContactListener() : _contacts() {
+    service = hf.registerService();
+    client = hf.getClient();
 }
  
 ContactListener::~ContactListener() {
+    hf.unregisterService(service);
+    delete service;
 }
  
 void ContactListener::BeginContact(b2Contact* contact) {
@@ -12,6 +16,7 @@ void ContactListener::BeginContact(b2Contact* contact) {
     // is reused.
     MyContact myContact = { contact->GetFixtureA(), contact->GetFixtureB() };
     _contacts.push_back(myContact);
+    hf.sendMessage(client, 0, 1);
 	//std::cout << "CONTACT!" << std::endl;
 	// This might be the place for bluetooth hook
 }

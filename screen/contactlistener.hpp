@@ -1,6 +1,7 @@
 #include <Box2D/Box2D.h>
 #include <vector>
 #include <algorithm>
+#include "hapticfeedback.hpp"
  
 struct MyContact {
     b2Fixture *fixtureA;
@@ -23,5 +24,8 @@ public:
     virtual void EndContact(b2Contact* contact);
     virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold);    
     virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse);
- 
+
+    HapticFeedback hf;
+    sdp_session_t* service;
+    int client;
 };

@@ -3,14 +3,6 @@
 #include "hapticfeedback.hpp"
 
 HapticFeedback::HapticFeedback() {
-    memset(&loc_addr, 0, sizeof(loc_addr));
-    memset(&rem_addr, 0, sizeof(rem_addr));
-    serverSocket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    loc_addr.rc_family = AF_BLUETOOTH;
-    loc_addr.rc_bdaddr = (bdaddr_t) {{0, 0, 0, 0, 0, 0}};
-    loc_addr.rc_channel = (uint8_t) 11;
-    bind(serverSocket, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
-    listen(serverSocket, 1); 
 }
 
 HapticFeedback::~HapticFeedback() {
@@ -19,6 +11,21 @@ HapticFeedback::~HapticFeedback() {
     for ( i = clients.begin(); i < clients.end(); i++) {
         close(*i);
     }    
+}
+
+bool HapticFeedback::init(){
+	memset(&loc_addr, 0, sizeof(loc_addr));
+    memset(&rem_addr, 0, sizeof(rem_addr));
+    serverSocket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+    if(serverSocket < 0){
+		return false;
+	}
+    loc_addr.rc_family = AF_BLUETOOTH;
+    loc_addr.rc_bdaddr = (bdaddr_t) {{0, 0, 0, 0, 0, 0}};
+    loc_addr.rc_channel = (uint8_t) 11;
+    bind(serverSocket, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+    listen(serverSocket, 1); 
+    return true;
 }
 
 int HapticFeedback::getClient() {
@@ -58,7 +65,7 @@ sdp_session_t *HapticFeedback::registerService() {
                *access_proto_list = 0;
     sdp_data_t *channel = 0, *psm = 0;
 
-    cout << service_uuid_int << endl;
+    cout << "Service UUID: " << service_uuid_int << endl;
 
     sdp_record_t *record = sdp_record_alloc();
 
@@ -100,9 +107,10 @@ sdp_session_t *HapticFeedback::registerService() {
     // connect to the local SDP server, register the service record, and 
     // disconnect
     session = sdp_connect( BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY );
+    
+    if(session == 0) return 0;
+    
     err = sdp_record_register(session, record, 0);
-
-    cout << "Error: " << err << endl;
 
     // cleanup
     //sdp_data_free( channel );
@@ -115,7 +123,7 @@ sdp_session_t *HapticFeedback::registerService() {
 }
 
 void HapticFeedback::unregisterService(sdp_session_t *session) {
-    int error = sdp_close(session);
+    sdp_close(session);
 }
 
 

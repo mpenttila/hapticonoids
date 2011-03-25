@@ -1,4 +1,4 @@
-SOURCES += Main.cpp gamewidget.cpp malletwidget.cpp puckwidget.cpp contactlistener.cpp hapticfeedback.cpp
+SOURCES += Main.cpp airhockeywidget.cpp malletwidget.cpp puckwidget.cpp contactlistener.cpp hapticfeedback.cpp
 
 CONFIG += release
 CONFIG -= qt
@@ -6,7 +6,7 @@ CONFIG -= app_bundle
 
 TARGET = AirHockey
 
-HEADERS += gamewidget.hpp
+HEADERS += airhockeywidget.hpp contactlistener.hpp
 
 macx {
   LIBS += -framework Nimble 

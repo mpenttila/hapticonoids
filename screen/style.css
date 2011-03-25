@@ -1,6 +1,15 @@
+AirHockeyWidget{
+	/* Use bluetooth? */
+	bluetooth: 1;
+	/* Mallet impact vibration type */
+	vibration-type: 1;
+	/* Goal scoring vibration type */
+	scoring-type: 1;
+}
+
 TextBox {
-  font-name: "DroidSans-Bold.ttf";
-  font-size: 72px;
-  foreground: #FFFFFF;
+	font-name: "DroidSans-Bold.ttf";
+	font-size: 72px;
+	foreground: #FFFFFF;
 }
 

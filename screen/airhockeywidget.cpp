@@ -3,22 +3,69 @@
 #include <Nimble/Random.hpp>
 #include <Box2D/Box2D.h>
 
-#include "gamewidget.hpp"
+#include "airhockeywidget.hpp"
 
+#define P1_MALLET 1
+#define P2_MALLET 2
 
-GameWidget::GameWidget(MultiWidgets::Widget * parent) :
+AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
   MultiWidgets::ImageWidget(parent),
   m_world(b2Vec2(0,0), true),
   leftScore(0),
-  rightScore(0)
+  rightScore(0),
+  mallet_vibration_type(this, "vibration-type", 0),
+  scoring_vibration_type(this, "scoring-type", 0),
+  use_bluetooth(this, "bluetooth", 0)
 {
-  setCSSType("GameWidget");
+  setCSSType("AirHockeyWidget");
   w = h = 0;
-  contactListener = new ContactListener();
-  m_world.SetContactListener(contactListener);  
+  contactListener = new ContactListener(this);
+  m_world.SetContactListener(contactListener);
+  player1 = new int(P1_MALLET);
+  player2 = new int(P2_MALLET);
 }
 
-void GameWidget::ensureWidgetsHaveBodies() {
+AirHockeyWidget::~AirHockeyWidget(){
+	if(service > 0){
+		hf.unregisterService(service);
+		delete service;
+	}
+}
+
+void AirHockeyWidget::initBluetooth(){
+	if(use_bluetooth == 1){
+		std::cout << "Connecting to Bluetooth adapter... " << std::endl;
+		hf.init();
+		service = hf.registerService();
+		
+		if(service > 0){
+			std::cout << "Bluetooth adapter found." << std::endl;
+		}
+		else{
+			std::cout << "Bluetooth adapter not found, disabling Bluetooth." << std::endl;
+			use_bluetooth = 0;
+			return;
+		}
+		
+		// This will block until client is found
+		std::cout << "Waiting for Bluetooth devices..." << std::endl;
+		client1 = hf.getClient();
+	}
+	else{
+		std::cout << "Bluetooth disabled." << std::endl;
+	}
+}
+
+void AirHockeyWidget::sendBluetoothHit(int player){
+	if(use_bluetooth == 1){
+		if(player == P1_MALLET){
+			hf.sendMessage(client1, 0, mallet_vibration_type);
+		}
+	}
+}
+
+void AirHockeyWidget::ensureWidgetsHaveBodies() {
+	
   MultiWidgets::Widget::ChildIterator it = childBegin();
   MultiWidgets::Widget::ChildIterator end = childEnd();
 
@@ -57,14 +104,24 @@ void GameWidget::ensureWidgetsHaveBodies() {
 	  body->SetAngularDamping(99.0f);
 
       b2Fixture * fixture = body->CreateFixture(&fixtureDef);
+      if(*it == mallet1){
+		  fixture->SetUserData(player1);
+	  }
+	  else if(*it == mallet2){
+		  fixture->SetUserData(player2);
+	  }
+	  else{
+		  fixture->SetUserData(0);
+	  }
+	  
       m_bodies[*it] = body;
- 	  m_fixtures[*it] = fixture;
+      m_fixtures[*it] = fixture;
     }
     ++it;
   }
 }
 
-void GameWidget::ensureGroundInitialized() {
+void AirHockeyWidget::ensureGroundInitialized() {
   static bool groundInit = false;
   const float border = 0.5f;
   if (!groundInit) {
@@ -99,7 +156,7 @@ void GameWidget::ensureGroundInitialized() {
   }
 }
 
-void GameWidget::updateBodiesToWidgets() {
+void AirHockeyWidget::updateBodiesToWidgets() {
   for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
     b2Vec2 position = it->second->GetPosition();
     float angle = it->second->GetAngle();
@@ -110,7 +167,7 @@ void GameWidget::updateBodiesToWidgets() {
   }
 }
 
-void GameWidget::checkScoring(){
+void AirHockeyWidget::checkScoring(){
 	Nimble::Vector2 center = puck->mapToParent(0.5f * puck->size());
 	bool scored = false;
 	if(center.x <= 0){
@@ -148,7 +205,7 @@ void GameWidget::checkScoring(){
 	}
 }
 
-void GameWidget::update(float dt)
+void AirHockeyWidget::update(float dt)
 {
   MultiWidgets::Widget::update(dt);
     
@@ -162,31 +219,31 @@ void GameWidget::update(float dt)
 
 }
 
-void GameWidget::input(MultiWidgets::GrabManager & gm, float dt)
+void AirHockeyWidget::input(MultiWidgets::GrabManager & gm, float dt)
 {  
 
-  ensureWidgetsHaveBodies();
-  ensureGroundInitialized();
+	ensureWidgetsHaveBodies();
+	ensureGroundInitialized();
 
-  MultiTouch::Sample s1 = gm.prevSample();
-  MultiTouch::Sample s2 = gm.sample();
-  std::vector<long> lost;
+	MultiTouch::Sample s1 = gm.prevSample();
+	MultiTouch::Sample s2 = gm.sample();
+	std::vector<long> lost;
 
-  for (std::set<long>::iterator it = m_currentFingerIds.begin(); it != m_currentFingerIds.end(); ) {
-    if (s2.findFinger(*it).isNull()) {
-      lost.push_back(*it);
-      m_currentFingerIds.erase(it++);
-    } else {
-      it++;
-    }
-  }
+	for (std::set<long>::iterator it = m_currentFingerIds.begin(); it != m_currentFingerIds.end(); ) {
+		if (s2.findFinger(*it).isNull()) {
+			lost.push_back(*it);
+			m_currentFingerIds.erase(it++);
+		} else {
+			it++;
+		}
+	}
   
 	for (unsigned int i=0; i < lost.size(); ++i) {
-    	MultiTouch::Finger f = s1.findFinger(lost[i]);
-    	if (f.isNull()) continue;
-		
+	MultiTouch::Finger f = s1.findFinger(lost[i]);
+	if (f.isNull()) continue;
+	
 		// Destroy joints from lost fingers
-		
+	
 		if(m_fingerjoints.count(f.id()) > 0){
 			b2MouseJoint * joint = m_fingerjoints[f.id()];
 			m_world.DestroyJoint(joint);
@@ -194,44 +251,44 @@ void GameWidget::input(MultiWidgets::GrabManager & gm, float dt)
 		}
 	}
 
-  int n = gm.fingerCount();  
-  for(int i = 0; i < n; i++) {
-    MultiTouch::Finger f = gm.getFinger(i);
-    
-    m_currentFingerIds.insert(f.id());
+	int n = gm.fingerCount();  
+	for(int i = 0; i < n; i++) {
+		
+		MultiTouch::Finger f = gm.getFinger(i);
+  
+		m_currentFingerIds.insert(f.id());
 
-	Nimble::Vector2 loc = f.tipLocation();
-	Nimble::Vector2 locPrev = f.prevTipLocation();
+		Nimble::Vector2 loc = f.tipLocation();
+		Nimble::Vector2 locPrev = f.prevTipLocation();
 
-   	b2Vec2 locationWorld = toBox2D(locPrev);
-	b2Vec2 newLocation = toBox2D(loc);
+		b2Vec2 locationWorld = toBox2D(locPrev);
+		b2Vec2 newLocation = toBox2D(loc);
 	
-	if(m_fingerjoints.count(f.id()) > 0){
-		// Update joint
-		m_fingerjoints[f.id()]->SetTarget(newLocation);
-	}
-	else{
+		if(m_fingerjoints.count(f.id()) > 0){
+			// Update joint
+			m_fingerjoints[f.id()]->SetTarget(newLocation);
+		}
+		else{
 	
-		MultiWidgets::Widget::ChildIterator it = childBegin();
-	    MultiWidgets::Widget::ChildIterator end = childEnd();
+			MultiWidgets::Widget::ChildIterator it = childBegin();
+			MultiWidgets::Widget::ChildIterator end = childEnd();
 
-	    while (it != end) {
-			if(*it == mallet1 || *it == mallet2){
-				b2Fixture * fixture = m_fixtures[*it];
-			    if (fixture->TestPoint(locationWorld)) {
-			        b2MouseJointDef md;
-			        md.bodyA = groundBody;
-			        md.bodyB = m_bodies[*it];
-			        md.target = newLocation;
-			        md.collideConnected = true;
-			        md.maxForce = 5000.0f * m_bodies[*it]->GetMass();
-
-			        m_fingerjoints[f.id()] = (b2MouseJoint *)m_world.CreateJoint(&md);
-			        m_bodies[*it]->SetAwake(true);
+			while (it != end) {
+				if(*it == mallet1 || *it == mallet2){
+					b2Fixture * fixture = m_fixtures[*it];
+					if (fixture->TestPoint(locationWorld)) {
+						b2MouseJointDef md;
+						md.bodyA = groundBody;
+						md.bodyB = m_bodies[*it];
+						md.target = newLocation;
+						md.collideConnected = true;
+						md.maxForce = 5000.0f * m_bodies[*it]->GetMass();
+						m_fingerjoints[f.id()] = (b2MouseJoint *)m_world.CreateJoint(&md);
+						m_bodies[*it]->SetAwake(true);
+					}
 				}
+				it++;
 			}
-			it++;
 		}
 	}
-  }
 }

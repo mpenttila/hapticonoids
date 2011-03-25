@@ -1,14 +1,11 @@
 #include "contactlistener.hpp"
 #include <iostream>
  
-ContactListener::ContactListener() : _contacts() {
-    service = hf.registerService();
-    client = hf.getClient();
+ContactListener::ContactListener(AirHockeyWidget * _widget) : _contacts() {
+	widget = _widget;
 }
  
 ContactListener::~ContactListener() {
-    hf.unregisterService(service);
-    delete service;
 }
  
 void ContactListener::BeginContact(b2Contact* contact) {
@@ -16,9 +13,18 @@ void ContactListener::BeginContact(b2Contact* contact) {
     // is reused.
     MyContact myContact = { contact->GetFixtureA(), contact->GetFixtureB() };
     _contacts.push_back(myContact);
-    hf.sendMessage(client, 0, 1);
+    //hf.sendMessage(client, 0, 1);
 	//std::cout << "CONTACT!" << std::endl;
-	// This might be the place for bluetooth hook
+	// Send Bluetooth message
+	int userA = 0, userB = 0;
+	if(contact->GetFixtureA()->GetUserData() != 0){
+		userA = *(int*)(contact->GetFixtureA()->GetUserData());
+		widget->sendBluetoothHit(userA);
+	}
+	if(contact->GetFixtureB()->GetUserData() != 0){
+		userB = *(int*)(contact->GetFixtureB()->GetUserData());
+		widget->sendBluetoothHit(userB);
+	}
 }
  
 void ContactListener::EndContact(b2Contact* contact) {

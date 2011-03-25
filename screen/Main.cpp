@@ -13,7 +13,8 @@
  *
  */
 
-#include <gamewidget.hpp>
+#include <airhockeywidget.hpp>
+#include <contactlistener.hpp>
 #include <malletwidget.hpp>
 #include <puckwidget.hpp>
 
@@ -47,7 +48,7 @@ int main(int argc, char ** argv)
 
   // Create physics / game widget
 
-  GameWidget * gw = new GameWidget(app.root());
+  AirHockeyWidget * gw = new AirHockeyWidget(app.root());
   gw->setSize(app.root()->size());
   gw->setStyle(app.style());
   gw->setDepth(0);
@@ -121,7 +122,8 @@ int main(int argc, char ** argv)
    gw->scorewidget->setInputTransparent(true);
    gw->scorewidget->setColor(0, 0, 0, 0);
    gw->scorewidget->setLocation(app.size().maximum() * 0.5f - scorewidth/2 - 5, app.size().minimum() * 0.1f);
-
+   
+   gw->initBluetooth();
 
   // Run the application:
   return app.run();

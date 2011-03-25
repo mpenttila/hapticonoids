@@ -19,9 +19,10 @@ class HapticFeedback {
         sockaddr_rc rem_addr;
  
     public:
-        HapticFeedback();
+		HapticFeedback();
         ~HapticFeedback();	
 
+		bool init();
         int getClient();
         void sendMessage(int client, int type, int id);
 

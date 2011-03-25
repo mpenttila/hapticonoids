@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.app.Activity;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -25,13 +26,13 @@ public class BluetoothClient extends Thread {
 	private static final int REQUEST_ENABLE_BT = 3;
 	private BluetoothAdapter mBluetoothAdapter;
 	private MessageEater[] eaterarray;
-	private Activity activity;
+	private Hapticonoids activity;
 	private BluetoothSocket game = null;
 	private InputStream btIn = null;
 	private OutputStream btOut = null;	
 	
 	
-	public BluetoothClient(MessageEater[] eaterarray, Activity activity) {
+	public BluetoothClient(MessageEater[] eaterarray, Hapticonoids activity) {
 		this.activity = activity;
 		this.eaterarray = eaterarray;
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -47,21 +48,35 @@ public class BluetoothClient extends Thread {
             this.activity.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);    
         }
         
-        // Get paired devices (We don't currently pair automatically)        
+        
+	}
+	
+	public void run() {
+		// Get paired devices (We don't currently pair automatically)
+        this.activity.setInfoText("Searching paired devices");
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();        	
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-            	if (device.getName().equals("game")) {
+            	Log.i("Hapticonoids::BluetoothClient", "Paired device: "+device.getName());
+            	int btclass = device.getBluetoothClass().getMajorDeviceClass();
+            	if (btclass == BluetoothClass.Device.COMPUTER_UNCATEGORIZED ||
+            			btclass == BluetoothClass.Device.COMPUTER_DESKTOP ||
+            			btclass == BluetoothClass.Device.COMPUTER_LAPTOP ||
+            			btclass == BluetoothClass.Device.COMPUTER_SERVER) {
             		try {
+            			this.activity.setInfoText("Connecting to "+device.getName());
             			//UUID tmp = UUID.fromString("1998ea20-cfca-4619-837d-b36b04fde3d5");            			
             			UUID tmp = UUID.fromString("20ea9819-1946-cacf-6bb3-7d83d5e3fd04");
-            			System.out.println("UUID: "+tmp.toString());
+            			Log.i("Hapticonoids::BluetoothClient","UUID: "+tmp.toString());
             			this.game = device.createRfcommSocketToServiceRecord(tmp);
             			this.game.connect();
                         this.btIn = this.game.getInputStream();
-                        this.btOut = this.game.getOutputStream();            			
+                        this.btOut = this.game.getOutputStream();
+                        this.activity.setInfoText("Game found, listening for events.");
+                        this.activity.setConnectedText("Connected to "+device.getName());
             		} catch (IOException e) {
-            			System.out.println("Connection failed!" + e.getMessage());
+            			Log.i("Hapticonoids::BluetoothClient","Connection failed: " + e.getMessage());
+            			this.activity.setInfoText("Connection failed!");
             			if (this.game != null) {
 	            			try {
 								this.game.close();
@@ -75,26 +90,40 @@ public class BluetoothClient extends Thread {
             	}
             }
         }
-        
-	}
-	
-	public void run() {
+		
+		
 		Looper.prepare();
 		byte[] buffer = new byte[1024];
 		int bytes;
-		System.out.println("Running the reciver loop!");
-		if (this.game == null) {
-			System.out.println("Connection failed. Sorry. Game not connected :(");
-			this.activity.finish();
-			return;
+		int timeout = 20;
+		while(this.game == null){
+			if(timeout == 0){
+				Log.i("Hapticonoids::BluetoothClient","Client not found, exiting.");
+				this.activity.finish();
+				return;
+			}
+			try{
+				Thread.sleep(500);
+			}
+			catch(InterruptedException ie){
+				break;
+			}
+			--timeout;
 		}
+		Log.i("Hapticonoids::BluetoothClient","Game found, running the receiver loop!");
 		while (true) {	
 			try {
 				bytes = this.btIn.read(buffer);
-				System.out.println(new String(buffer));
-				eaterarray[0].doTask(1);
+				// Construct string
+				StringBuilder message = new StringBuilder();
+				for(int i = 0; i < bytes; i++){
+					message.append((char)buffer[i]);
+				}
+				Log.i("Hapticonoids::BluetoothClient",message.toString());
+				String parts[] = message.toString().split(":");
+				eaterarray[0].doTask(Integer.parseInt(parts[1]));
 			} catch (IOException e) {
-				System.out.println("Reciver loop ended!" + e.getMessage());
+				Log.i("Hapticonoids::BluetoothClient","Receiver loop ended: " + e.getMessage());
 				this.activity.finish();
 				break; 
 			}

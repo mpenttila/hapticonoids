@@ -2,25 +2,31 @@ package fi.hapticonoids;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.Vibrator;
+import android.util.Log;
 
 public final class VibratorThread extends Thread implements MessageEater {
 
 	Vibrator vibra;
 	Handler msgQueue = null;
 	private static int type = 1;
+	private Hapticonoids hapticonoids;
 	
-	public VibratorThread(Vibrator vibra) {
+	public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
+	
+	public VibratorThread(Vibrator vibra, Hapticonoids hapticonoids) {
 		this.vibra = vibra;
+		this.hapticonoids = hapticonoids;
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("Starting prepare");
+		Log.i("Hapticonoids::VibratorThread","Starting prepare");
 		Looper.prepare();
-		System.out.println("Creating handler");
+		Log.i("Hapticonoids::VibratorThread","Creating handler");
 		this.msgQueue = new Handler();
-		System.out.println("Starting loop");
+		Log.i("Hapticonoids::VibratorThread","Starting loop");
         Looper.loop();
 	}
 	
@@ -36,12 +42,12 @@ public final class VibratorThread extends Thread implements MessageEater {
 		});
 	}
 	
-	public synchronized void doTask(int id) {
+	public synchronized void doTask(final int id) {
 		this.msgQueue.post(new Runnable() {
 			public void run() {
-				// TODO Auto-generated method stub
-				vibra.vibrate(1000);
-				System.out.println("Vibrate!");
+				hapticonoids.setInfoText("Vibrating!");
+				Log.i("Hapticonoids::VibratorThread","Vibrate!");
+				vibra.vibrate(VIBRATION_LENGTH[id]);
 			}
 		});
 	}

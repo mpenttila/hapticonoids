@@ -7,6 +7,8 @@
 
 #define P1_MALLET 1
 #define P2_MALLET 2
+#define MALLET1_VERTICAL_FRACTION 0.15f
+#define MALLET2_VERTICAL_FRACTION 0.85f
 
 AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
   MultiWidgets::ImageWidget(parent),
@@ -190,10 +192,10 @@ void AirHockeyWidget::checkScoring(){
 				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
 			}
 			else if((Widget*)it->first == mallet1){
-				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.1f, size().minimum() * 0.5f)), 0);
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET1_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
 			}
 			else if((Widget*)it->first == mallet2){
-				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.9f, size().minimum() * 0.5f)), 0);
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET2_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
 			}
 			it->second->SetLinearVelocity(b2Vec2(0,0));
 		}

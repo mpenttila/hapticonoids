@@ -25,8 +25,8 @@
 
 #include <Radiant/Directory.hpp>
 
-/* This simple application loads images from a directory, and shows
-   them on the screen. */
+#define MALLET1_VERTICAL_FRACTION 0.15f
+#define MALLET2_VERTICAL_FRACTION 0.85f
 
 int main(int argc, char ** argv)
 {
@@ -59,8 +59,8 @@ int main(int argc, char ** argv)
   float pucksize = app.size().minimum() * 0.07f;
   float vertical_middle = app.size().minimum() * 0.5f;
   
-  float mallet1_horizontal = app.size().maximum() * 0.1f;
-  float mallet2_horizontal = app.size().maximum() * 0.9f;
+  float mallet1_horizontal = app.size().maximum() * MALLET1_VERTICAL_FRACTION;
+  float mallet2_horizontal = app.size().maximum() * MALLET2_VERTICAL_FRACTION;
   float puck_horizontal = app.size().maximum() * 0.5f;
 
    // Create image widgets:
@@ -116,15 +116,34 @@ int main(int argc, char ** argv)
 
    gw->scorewidget = new MultiWidgets::TextBox(app.root(), 0, MultiWidgets::TextBox::HCENTER);
    gw->scorewidget->setStyle(app.style());
-   gw->scorewidget->setText(std::string("Player 1   0    0   Player 2"));
+   gw->scorewidget->setText(std::string("0    0"));
    int scorewidth = gw->scorewidget->totalTextAdvance() + 100;
    gw->scorewidget->setWidth(scorewidth);
    gw->scorewidget->setInputTransparent(true);
    gw->scorewidget->setColor(0, 0, 0, 0);
    gw->scorewidget->setLocation(app.size().maximum() * 0.5f - scorewidth/2 - 5, app.size().minimum() * 0.1f);
    
+   MultiWidgets::TextBox * p1 = new MultiWidgets::TextBox(app.root(), 0, MultiWidgets::TextBox::HCENTER);
+   p1->setStyle(app.style());
+   p1->setText(std::string("Player 1"));
+   p1->setWidth(p1->totalTextAdvance() + 50);
+   p1->setInputTransparent(true);
+   p1->setColor(0, 0, 0, 0);
+   p1->setRotation(Nimble::Math::HALF_PI);
+   p1->setLocation(app.size().maximum() * 0.1f, app.size().minimum() * 0.5f - p1->totalTextAdvance()/2 - 10);
+   
+   MultiWidgets::TextBox * p2 = new MultiWidgets::TextBox(app.root(), 0, MultiWidgets::TextBox::HCENTER);
+   p2->setStyle(app.style());
+   p2->setText(std::string("Player 2"));
+   p2->setWidth(p2->totalTextAdvance() + 50);
+   p2->setInputTransparent(true);
+   p2->setColor(0, 0, 0, 0);
+   p2->setRotation(-1 * Nimble::Math::HALF_PI);
+   //p2->setLocation(app.size().maximum() * 0.9f, app.size().minimum() * 0.5f - p2->totalTextAdvance()/2 - 10));
+   p2->setLocation(app.size().maximum() * 0.9f, app.size().minimum() - p2->totalTextAdvance());
+   
    gw->initBluetooth();
 
-  // Run the application:
-  return app.run();
+   // Run the application:
+   return app.run();
 }

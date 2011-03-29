@@ -2,7 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" android:orientation="vertical">
-    <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="36sp" android:textColor="#A4C639" android:layout_marginTop="50dip" android:layout_marginBottom="50dip"></TextView>
-    <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:id="@+id/infoField" android:layout_marginBottom="20dip" android:text="@string/app_name"></TextView>
-    <TextView android:layout_width="wrap_content" android:id="@+id/connectedField" android:layout_height="wrap_content" android:layout_gravity="center" android:text="@string/app_name"></TextView>
+    <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="36sp" android:textColor="#A4C639" android:layout_marginTop="50dip" android:layout_marginBottom="25dip"></TextView>
+    <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:layout_height="wrap_content" android:id="@+id/infoField" android:layout_marginBottom="20dip" android:text="@string/app_name" android:textSize="18sp"></TextView>
+    <RadioGroup android:id="@+id/radioGroup1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center">
+        <RadioButton android:layout_height="wrap_content" android:checked="true" android:text="@string/player1" android:layout_width="wrap_content" android:layout_gravity="center_vertical" android:id="@+id/radio_p1"></RadioButton>
+        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/player2" android:layout_gravity="center_vertical" android:id="@+id/radio_p2"></RadioButton>
+    </RadioGroup>
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView2" android:layout_gravity="center" android:text="@string/compname" android:textSize="24sp"></TextView>
+    <Spinner android:layout_height="wrap_content" android:id="@+id/spinner1" android:layout_width="match_parent" android:layout_margin="10dip"></Spinner>
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center" android:text="@string/connect" android:textSize="24sp" android:id="@+id/connectButton"></Button>
 </LinearLayout>

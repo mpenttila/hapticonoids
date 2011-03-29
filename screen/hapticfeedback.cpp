@@ -1,5 +1,8 @@
 #include <iostream>
 #include <new>
+#include <pthread.h>
+#include <cstdlib>
+
 #include "hapticfeedback.hpp"
 
 HapticFeedback::HapticFeedback() {
@@ -13,6 +16,45 @@ HapticFeedback::~HapticFeedback() {
     }    
 }
 
+int receivePlayerSelection(int client){
+	char buf[1024] = { 0 };
+	memset(buf, 0, sizeof(buf));
+	cout << "Trying to read from socket" << endl;
+	int bytes_read = read(client, buf, sizeof(buf));
+    if( bytes_read > 0 ) {
+        printf("received [%s]\n", buf);
+    }
+    return atoi(buf);
+}
+
+void* findClients(void * instance){
+	HapticFeedback * hf = (HapticFeedback*) instance;
+	
+	cout << "Waiting for first client." << endl;
+	
+	int client1 = hf->getClient();
+	int c1_p = receivePlayerSelection(client1);
+	if(c1_p == 1){
+		hf->p1_clients.push_back(client1);
+	}
+	else if(c1_p == 2){
+		hf->p2_clients.push_back(client1);
+	}
+	
+	cout << "Waiting for second client." << endl;
+	
+	int client2 = hf->getClient();
+	int c2_p = receivePlayerSelection(client2);
+	if(c2_p == 1){
+		hf->p1_clients.push_back(client2);
+	}
+	else if(c2_p == 2){
+		hf->p2_clients.push_back(client2);
+	}
+	
+	cout << "Exiting findClients" << endl;
+}
+
 bool HapticFeedback::init(){
 	memset(&loc_addr, 0, sizeof(loc_addr));
     memset(&rem_addr, 0, sizeof(rem_addr));
@@ -24,7 +66,13 @@ bool HapticFeedback::init(){
     loc_addr.rc_bdaddr = (bdaddr_t) {{0, 0, 0, 0, 0, 0}};
     loc_addr.rc_channel = (uint8_t) 11;
     bind(serverSocket, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
-    listen(serverSocket, 1); 
+    listen(serverSocket, 1);
+    
+    // Get clients in separate thread
+    pthread_t thread;
+    pthread_create(&thread, NULL, findClients, this);
+    cout << "Bluetooth thread created." << endl;
+    
     return true;
 }
 
@@ -45,6 +93,19 @@ void HapticFeedback::sendMessage(int client, int type, int id) {
     int msgsize = sprintf(message, "%u:%u", type,id);
     write(client, message, msgsize);
     delete message;
+}
+
+void HapticFeedback::sendMessageToPlayer(int player, int type, int id){
+	if(player == 1){
+		for (vector<int>::iterator i = p1_clients.begin(); i < p1_clients.end(); i++) {
+			sendMessage(*i, type, id);
+		}    
+	}
+	else if(player == 2){
+		for (vector<int>::iterator i = p2_clients.begin(); i < p2_clients.end(); i++) {
+			sendMessage(*i, type, id);
+		} 
+	}
 }
 
 sdp_session_t *HapticFeedback::registerService() {

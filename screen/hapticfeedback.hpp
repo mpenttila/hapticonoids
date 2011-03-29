@@ -25,9 +25,14 @@ class HapticFeedback {
 		bool init();
         int getClient();
         void sendMessage(int client, int type, int id);
+        
+        void sendMessageToPlayer(int player, int type, int id);
 
         sdp_session_t *registerService();
         void unregisterService(sdp_session_t *session);
+        
+        vector<int> p1_clients;
+        vector<int> p2_clients;
 
 };  
 

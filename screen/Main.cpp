@@ -116,7 +116,7 @@ int main(int argc, char ** argv)
 
    gw->scorewidget = new MultiWidgets::TextBox(app.root(), 0, MultiWidgets::TextBox::HCENTER);
    gw->scorewidget->setStyle(app.style());
-   gw->scorewidget->setText(std::string("0    0"));
+   gw->scorewidget->setText(std::string("Player 1   0    0   Player 2"));
    int scorewidth = gw->scorewidget->totalTextAdvance() + 100;
    gw->scorewidget->setWidth(scorewidth);
    gw->scorewidget->setInputTransparent(true);

@@ -28,7 +28,6 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
 AirHockeyWidget::~AirHockeyWidget(){
 	if(service > 0){
 		hf.unregisterService(service);
-		delete service;
 	}
 }
 
@@ -49,7 +48,7 @@ void AirHockeyWidget::initBluetooth(){
 		
 		// This will block until client is found
 		std::cout << "Waiting for Bluetooth devices..." << std::endl;
-		client1 = hf.getClient();
+		//client1 = hf.getClient();
 	}
 	else{
 		std::cout << "Bluetooth disabled." << std::endl;
@@ -58,9 +57,7 @@ void AirHockeyWidget::initBluetooth(){
 
 void AirHockeyWidget::sendBluetoothHit(int player){
 	if(use_bluetooth == 1){
-		if(player == P1_MALLET){
-			hf.sendMessage(client1, 0, mallet_vibration_type);
-		}
+		hf.sendMessageToPlayer(player, 0, mallet_vibration_type);
 	}
 }
 
@@ -90,14 +87,16 @@ void AirHockeyWidget::ensureWidgetsHaveBodies() {
       fixtureDef.shape = &circle;
  	  
 	  if(*it == puck){
-		fixtureDef.friction = 0.5f;
-		fixtureDef.restitution = 0.8f;
+		fixtureDef.friction = 0.9f;
+		fixtureDef.restitution = 0.98f;
 		fixtureDef.density = 10.0f;
+		body->SetLinearDamping(0.4f);
 	  }
 	  else{
 		fixtureDef.friction = 1.0f;
 		fixtureDef.restitution = 0.5f;
 		fixtureDef.density = 100.0f;
+		body->SetLinearDamping(10.0f);
 	  }
 	
 	  // Prevent rotation
@@ -123,7 +122,7 @@ void AirHockeyWidget::ensureWidgetsHaveBodies() {
 
 void AirHockeyWidget::ensureGroundInitialized() {
   static bool groundInit = false;
-  const float border = 0.5f;
+  const float border = 0.85f;
   if (!groundInit) {
     groundInit = true;
     b2BodyDef groundDef;
@@ -131,8 +130,6 @@ void AirHockeyWidget::ensureGroundInitialized() {
     groundDef.position.Set(c.x, c.y);
     groundBody = m_world.CreateBody(&groundDef);
     b2PolygonShape groundBox;
-    // Left
-    //groundBox.SetAsBox(border, c.y + border, b2Vec2(-c.x, 0.0f), 0.0f);
     // Left upper
     groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(-c.x, -c.y * 0.7f), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
@@ -142,8 +139,6 @@ void AirHockeyWidget::ensureGroundInitialized() {
     // Bottom
     groundBox.SetAsBox(c.x, border, b2Vec2(0.0f, c.y), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
-    // Right
-    //groundBox.SetAsBox(border, c.y + border, b2Vec2(c.x, 0.0f), 0.0f);
     // Right upper
     groundBox.SetAsBox(border, c.y * 0.3f, b2Vec2(c.x, -c.y * 0.7f), 0.0f);
     groundBody->CreateFixture(&groundBox, 0.0f);
@@ -209,7 +204,7 @@ void AirHockeyWidget::update(float dt)
 {
   MultiWidgets::Widget::update(dt);
     
-  m_world.Step(dt/1, 10, 10);
+  m_world.Step(dt, 5, 5);
   m_world.ClearForces();
 
   updateBodiesToWidgets();

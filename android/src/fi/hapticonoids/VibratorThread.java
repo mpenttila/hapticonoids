@@ -2,7 +2,6 @@ package fi.hapticonoids;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -47,7 +46,11 @@ public final class VibratorThread extends Thread implements MessageEater {
 			public void run() {
 				hapticonoids.setInfoText("Vibrating!");
 				Log.i("Hapticonoids::VibratorThread","Vibrate!");
-				vibra.vibrate(VIBRATION_LENGTH[id]);
+				int vibrate_idx = 0;
+				if(id >= 0 && id < VIBRATION_LENGTH.length){
+					vibrate_idx = id;
+				}
+				vibra.vibrate(VIBRATION_LENGTH[vibrate_idx]);
 			}
 		});
 	}

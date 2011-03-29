@@ -2,4 +2,8 @@
 <resources>
     <string name="head">Hapticonoids Test App!</string>
     <string name="app_name">Hapticonoids</string>
+    <string name="player1">Player 1</string>
+    <string name="player2">Player 2</string>
+    <string name="compname">Select computer name:</string>
+    <string name="connect">Connect</string>
 </resources>

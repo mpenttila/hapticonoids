@@ -9,7 +9,7 @@ public final class VibratorThread extends Thread implements MessageEater {
 
 	Vibrator vibra;
 	Handler msgQueue = null;
-	private static int type = 1;
+	private static int type = 0;
 	private Hapticonoids hapticonoids;
 	
 	public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
@@ -40,7 +40,7 @@ public final class VibratorThread extends Thread implements MessageEater {
 			}
 		});
 	}
-	
+
 	public synchronized void doTask(final int id) {
 		this.msgQueue.post(new Runnable() {
 			public void run() {

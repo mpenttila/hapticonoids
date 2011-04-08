@@ -39,8 +39,9 @@ public class Hapticonoids extends Activity implements OnClickListener{
                 
         this.vibra = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);        
     	VibratorThread vt = new VibratorThread(this.vibra, this);
-    	vt.start();    	
-    	MessageEater[] eaterarray = {vt};
+    	vt.start();
+    	SoundThread st = new SoundThread(this);
+    	MessageEater[] eaterarray = {vt, st};
     	this.btclient = new BluetoothClient(eaterarray, this);
     	
     	this.deviceSpinner = (Spinner) findViewById(R.id.spinner1);

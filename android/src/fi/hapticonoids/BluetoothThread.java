@@ -102,7 +102,7 @@ public class BluetoothThread implements Runnable{
 				}
 				Log.i("Hapticonoids::BluetoothThread",message.toString());
 				String parts[] = message.toString().split(":");
-				eaterarray[0].doTask(Integer.parseInt(parts[1]));
+				eaterarray[Integer.parseInt(parts[0])].doTask(Integer.parseInt(parts[1]));
 			} catch (IOException e) {
 				Log.i("Hapticonoids::BluetoothThread","Receiver loop ended: " + e.getMessage());
 				this.activity.finish();

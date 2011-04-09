@@ -89,8 +89,11 @@ int HapticFeedback::getClient() {
 }
 
 void HapticFeedback::sendMessage(int client, int type, int id) {
+	// Sanitize
+	if(type < 0 || type > 9) type = 0;
+	if(id < 0 || id > 999) id = 0;
     char* message = new char[sizeof(int)*2+10];
-    int msgsize = sprintf(message, "%u:%u", type,id);
+    int msgsize = sprintf(message, "%u:%03u", type,id);
     write(client, message, msgsize);
     delete message;
 }

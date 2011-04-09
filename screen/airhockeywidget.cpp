@@ -59,7 +59,9 @@ void AirHockeyWidget::initBluetooth(){
 
 void AirHockeyWidget::sendBluetoothHit(int player){
 	if(use_bluetooth == 1){
+		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 0, mallet_vibration_type);
+		hf.sendMessageToPlayer(player, 1, 1);
 	}
 }
 

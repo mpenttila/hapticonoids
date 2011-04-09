@@ -16,7 +16,7 @@ public class SoundThread extends Thread implements MessageEater {
 	public SoundThread(Hapticonoids hapticonoids) {
 		this.hapticonoids = hapticonoids;
 		this.sounds = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		soundsIndex[0] = this.sounds.load(hapticonoids, R.raw.thud, 1);
+		soundsIndex[0] = this.sounds.load(hapticonoids, R.raw.thud2, 1);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class SoundThread extends Thread implements MessageEater {
 		public void run() {
 			switch(this.id) {
 			case 1:
-				this.st.sounds.play(this.st.soundsIndex[0], (float)1.0, (float)1.0, 0, 0, (float)1.0);
+				this.st.sounds.play(this.st.soundsIndex[0], (float)1.0, (float)1.0, 10, 0, (float)1.0);
 				System.out.println("Thud!");
 				break;
 			}

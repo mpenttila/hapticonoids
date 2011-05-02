@@ -5,6 +5,11 @@ import android.os.Looper;
 import android.os.Vibrator;
 import android.util.Log;
 
+/**
+ * Class realizing the thread to process vibration events.
+ * @author Veli-Pekka Kestilä, Markus Penttilä
+ *
+ */
 public final class VibratorThread extends Thread implements MessageEater {
 
 	Vibrator vibra;
@@ -14,11 +19,19 @@ public final class VibratorThread extends Thread implements MessageEater {
 	
 	public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
 	
+	/**
+	 * Constructor accepting the vibration resource and the main activity.
+	 * @param vibra
+	 * @param hapticonoids
+	 */
 	public VibratorThread(Vibrator vibra, Hapticonoids hapticonoids) {
 		this.vibra = vibra;
 		this.hapticonoids = hapticonoids;
 	}
 	
+	/**
+	 * Set up the message processor.
+	 */
 	@Override
 	public void run() {
 		Log.i("Hapticonoids::VibratorThread","Starting prepare");
@@ -29,10 +42,16 @@ public final class VibratorThread extends Thread implements MessageEater {
         Looper.loop();
 	}
 	
+	/**
+	 * Return the type of the thread 0 for vibrator 
+	 */
 	public int getType() {
 		return VibratorThread.type;
 	}
 	
+	/**
+	 * Stop listening vibration events.
+	 */
 	public synchronized void stopListener() {
 		this.msgQueue.post(new Runnable() {
 			public void run() {
@@ -41,6 +60,9 @@ public final class VibratorThread extends Thread implements MessageEater {
 		});
 	}
 
+	/**
+	 * Process the actual vibration event from Bluetooth client.
+	 */
 	public synchronized void doTask(final int id) {
 		this.msgQueue.post(new Runnable() {
 			public void run() {

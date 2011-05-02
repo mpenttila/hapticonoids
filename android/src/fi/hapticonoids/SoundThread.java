@@ -5,6 +5,11 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Looper;
 
+/**
+ * This class implements thread which will play the sound effects from the player.
+ * @author Veli-Pekka Kestilä, Markus Penttilä
+ *
+ */
 public class SoundThread extends Thread implements MessageEater {
 
 	Handler msgQueue = null;
@@ -17,6 +22,10 @@ public class SoundThread extends Thread implements MessageEater {
 		this.hapticonoids = hapticonoids;
 		this.sounds = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
 		soundsIndex[1] = this.sounds.load(hapticonoids, R.raw.thud2, 1);
+		soundsIndex[2] = this.sounds.load(hapticonoids, R.raw.boink2, 1);
+		soundsIndex[3] = this.sounds.load(hapticonoids, R.raw.siren_loop, 1);
+		soundsIndex[4] = this.sounds.load(hapticonoids, R.raw.zoom, 1);
+		soundsIndex[5] = this.sounds.load(hapticonoids, R.raw.beep7 , 1);
 	}
 
 	@Override
@@ -29,10 +38,16 @@ public class SoundThread extends Thread implements MessageEater {
         Looper.loop();
 	}	
 	
+	/**
+	 * Get the type of the message eater. (1 sound processor)
+	 */
 	public int getType() {
 		return SoundThread.type;
 	}
 
+	/**
+	 * Stop the sound processing loop.
+	 */
 	public synchronized void stopListener() {
 		this.msgQueue.post(new Runnable() {
 			public void run() {
@@ -40,25 +55,11 @@ public class SoundThread extends Thread implements MessageEater {
 			}
 		});
 	}
-
-	private class SoundRunnable implements Runnable {
-		int id = -1;
-		SoundThread st = null;
-		
-		public SoundRunnable(SoundThread st, int id) {
-			this.id = id;
-			this.st = st;
-		}
-		
-		public void run() {
-			this.st.sounds.play(this.st.soundsIndex[this.id], (float)1.0, (float)1.0, 10, 0, (float)1.0);
-			System.out.println("Thud!");
-		}		
-	}
 	
+	/**
+	 * Play the sound effect.
+	 */
 	public synchronized void doTask(int id) {
-		//SoundRunnable sr = new SoundRunnable(this, id);		
-		//this.msgQueue.post(sr);
 		this.sounds.play(this.soundsIndex[id], (float)1.0, (float)1.0, 10, 0, (float)1.0);
 	}
 

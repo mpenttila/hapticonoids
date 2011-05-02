@@ -12,6 +12,11 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Looper;
 import android.util.Log;
 
+/**
+ * Class implements Bluetooth thread functionality.
+ * @author Veli-Pekka Kestilä, Markus Penttilä
+ *
+ */
 public class BluetoothThread implements Runnable{
 	
 	private String connectionPartner;
@@ -23,6 +28,15 @@ public class BluetoothThread implements Runnable{
 	private MessageEater[] eaterarray;
 	private char player;
 	
+	/**
+	 * Main constructor for the class.
+	 * @param connectionPartner
+	 * @param activity
+	 * @param game
+	 * @param mBluetoothAdapter
+	 * @param eaterarray
+	 * @param player
+	 */
 	public BluetoothThread(String connectionPartner, Hapticonoids activity,
 			BluetoothSocket game, BluetoothAdapter mBluetoothAdapter,
 			MessageEater[] eaterarray, int player) {
@@ -35,6 +49,10 @@ public class BluetoothThread implements Runnable{
 		this.player = Integer.toString(player).charAt(0);
 	}
 
+	/**
+	 * Running method which will process the messages coming through the BT connection
+	 * and send the player id we want to listen to the server in the beginning.
+	 */
 	public void run() {
 		if(this.connectionPartner == null) return;
 		this.activity.setInfoText("Connecting to "+this.connectionPartner+"...");

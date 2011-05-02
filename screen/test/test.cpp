@@ -12,7 +12,9 @@ int main(int argc, char** argv) {
         int client = hf.getClient();
         cout << "Client found Sending message\n"; 
         hf.sendMessage(client, 0, 1);
-        cout << "Message send\n\n";
+        cout << "Vibrate message send\n\n";
+        hf.sendMessage(client, 1, 1);
+        cout << "Ring message send\n\n";
         i++;
     }
     hf.unregisterService(service);

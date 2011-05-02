@@ -1,3 +1,3 @@
 #!/bin/sh
-g++ -lbluetooth ../hapticfeedback.cpp test.cpp -o test
+g++ -lbluetooth -lpthread ../hapticfeedback.cpp test.cpp -o test
 

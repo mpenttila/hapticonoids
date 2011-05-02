@@ -1,4 +1,5 @@
 #include "contactlistener.hpp"
+#include "airhockeywidget.hpp"
 #include <iostream>
  
 ContactListener::ContactListener(AirHockeyWidget * _widget) : _contacts() {
@@ -16,14 +17,32 @@ void ContactListener::BeginContact(b2Contact* contact) {
     //hf.sendMessage(client, 0, 1);
 	//std::cout << "CONTACT!" << std::endl;
 	// Send Bluetooth message
-	int userA = 0, userB = 0;
+	int fixA = 0, fixB = 0;
 	if(contact->GetFixtureA()->GetUserData() != 0){
-		userA = *(int*)(contact->GetFixtureA()->GetUserData());
-		widget->sendBluetoothHit(userA);
+		fixA = *(int*)(contact->GetFixtureA()->GetUserData());
 	}
 	if(contact->GetFixtureB()->GetUserData() != 0){
-		userB = *(int*)(contact->GetFixtureB()->GetUserData());
-		widget->sendBluetoothHit(userB);
+		fixB = *(int*)(contact->GetFixtureB()->GetUserData());
+	}
+	if(fixA == P1_MALLET || fixA == P2_MALLET){
+		if(fixB == P1_MALLET || fixB == P2_MALLET){
+			widget->sendPuckHit(fixA);
+			widget->sendPuckHit(fixB);
+		}
+		else if(fixB == PUCK){
+			widget->sendPuckHit(fixA);
+		}
+		else{
+			widget->sendWallHit(fixA);
+		}
+	}
+	if(fixB == P2_MALLET || fixB == P1_MALLET){
+		if(fixA == PUCK){
+			widget->sendPuckHit(fixB);
+		}
+		else{
+			widget->sendWallHit(fixB);
+		}
 	}
 }
  

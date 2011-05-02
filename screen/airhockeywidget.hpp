@@ -9,10 +9,12 @@
 
 #include <map>
 
-#include "malletwidget.hpp"
-#include "puckwidget.hpp"
 #include "contactlistener.hpp"
 #include "hapticfeedback.hpp"
+
+#define P1_MALLET 1
+#define P2_MALLET 2
+#define PUCK 3
 
 class ContactListener;
 
@@ -34,7 +36,10 @@ public:
   void updateBodiesToWidgets();
   void checkScoring();
   void initBluetooth();
-  void sendBluetoothHit(int player);
+  void sendPuckHit(int player);
+  void sendWallHit(int player);
+  void sendScoringSoundAndVibration(int player);
+  void sendVictorySound(int player);
 
   void input(MultiWidgets::GrabManager & gm, float dt);
 
@@ -45,9 +50,9 @@ public:
   std::map<void*, b2Fixture*> m_fixtures;
   b2Body * groundBody; 
 
-  PuckWidget * puck;
-  MalletWidget * mallet1;
-  MalletWidget * mallet2;
+  MultiWidgets::ImageWidget * puck;
+  MultiWidgets::ImageWidget * mallet1;
+  MultiWidgets::ImageWidget * mallet2;
   ContactListener * contactListener;
 
   std::map<long, b2MouseJoint*> m_fingerjoints;
@@ -59,13 +64,20 @@ public:
 
   int * player1;
   int * player2;
+  int * puckid;
   
   HapticFeedback hf;
   sdp_session_t* service;
   int client1;
    
-  Valuable::ValueInt mallet_vibration_type;
+  Valuable::ValueInt mallet_puck_vibration_type;
+  Valuable::ValueInt mallet_wall_vibration_type;
   Valuable::ValueInt scoring_vibration_type;
+  Valuable::ValueInt scoring_sound_type;
+  Valuable::ValueInt puck_hit_sound_type;
+  Valuable::ValueInt wall_hit_sound_type;
+  Valuable::ValueInt victory_sound_type;
+  Valuable::ValueInt win_limit;
   Valuable::ValueInt use_bluetooth;
 };
 

@@ -15,8 +15,6 @@
 
 #include <airhockeywidget.hpp>
 #include <contactlistener.hpp>
-#include <malletwidget.hpp>
-#include <puckwidget.hpp>
 
 #include <MultiWidgets/ImageWidget.hpp>
 #include <MultiWidgets/TextBox.hpp>
@@ -63,15 +61,10 @@ int main(int argc, char ** argv)
   float mallet2_horizontal = app.size().maximum() * MALLET2_VERTICAL_FRACTION;
   float puck_horizontal = app.size().maximum() * 0.5f;
 
-   // Create image widgets:
-   MalletWidget * mallet1 =
-     new MalletWidget();
-	
-   MalletWidget * mallet2 =
-     new MalletWidget();
-
-   PuckWidget * puck =
-     new PuckWidget();	
+  // Create image widgets:
+  MultiWidgets::ImageWidget * mallet1 = new MultiWidgets::ImageWidget();
+  MultiWidgets::ImageWidget * mallet2 = new MultiWidgets::ImageWidget();
+  MultiWidgets::ImageWidget * puck = new MultiWidgets::ImageWidget();  
 
    /* Check that the file is loadable. The actual file loading is
       done in a background thread, so that the loading does not stall

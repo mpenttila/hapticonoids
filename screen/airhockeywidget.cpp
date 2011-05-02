@@ -5,8 +5,6 @@
 
 #include "airhockeywidget.hpp"
 
-#define P1_MALLET 1
-#define P2_MALLET 2
 #define MALLET1_VERTICAL_FRACTION 0.15f
 #define MALLET2_VERTICAL_FRACTION 0.85f
 
@@ -15,8 +13,14 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
   m_world(b2Vec2(0,0), true),
   leftScore(0),
   rightScore(0),
-  mallet_vibration_type(this, "vibration-type", 0),
-  scoring_vibration_type(this, "scoring-type", 0),
+  mallet_puck_vibration_type(this, "mallet-puck-vibration-type", 0),
+  mallet_wall_vibration_type(this, "mallet-wall-vibration-type", 0),
+  scoring_vibration_type(this, "scoring-vibration-type", 0),
+  scoring_sound_type(this, "scoring-sound-type", 0),
+  wall_hit_sound_type(this, "wall-hit-sound-type", 0),
+  puck_hit_sound_type(this, "puck-hit-sound-type", 0),
+  victory_sound_type(this, "victory-sound-type", 0),
+  win_limit(this, "win-limit", 0),
   use_bluetooth(this, "bluetooth", 0)
 {
   setCSSType("AirHockeyWidget");
@@ -25,6 +29,7 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
   m_world.SetContactListener(contactListener);
   player1 = new int(P1_MALLET);
   player2 = new int(P2_MALLET);
+  puckid = new int(PUCK);
 }
 
 AirHockeyWidget::~AirHockeyWidget(){
@@ -57,11 +62,34 @@ void AirHockeyWidget::initBluetooth(){
 	}
 }
 
-void AirHockeyWidget::sendBluetoothHit(int player){
+void AirHockeyWidget::sendPuckHit(int player){
 	if(use_bluetooth == 1){
 		// int player_number, int message_type, int message_id
-		hf.sendMessageToPlayer(player, 1, 1);
-		hf.sendMessageToPlayer(player, 0, mallet_vibration_type);
+		hf.sendMessageToPlayer(player, 1, puck_hit_sound_type);
+		hf.sendMessageToPlayer(player, 0, mallet_puck_vibration_type);
+	}
+}
+
+void AirHockeyWidget::sendWallHit(int player){
+	if(use_bluetooth == 1){
+		// int player_number, int message_type, int message_id
+		hf.sendMessageToPlayer(player, 1, wall_hit_sound_type);
+		hf.sendMessageToPlayer(player, 0, mallet_wall_vibration_type);
+	}
+}
+
+void AirHockeyWidget::sendScoringSoundAndVibration(int player){
+	if(use_bluetooth == 1){
+		// int player_number, int message_type, int message_id
+		hf.sendMessageToPlayer(player, 1, scoring_sound_type);
+		hf.sendMessageToPlayer(player, 0, scoring_vibration_type);
+	}
+}
+
+void AirHockeyWidget::sendVictorySound(int player){
+	if(use_bluetooth == 1){
+		// int player_number, int message_type, int message_id
+		hf.sendMessageToPlayer(player, 1, victory_sound_type);
 	}
 }
 
@@ -114,7 +142,8 @@ void AirHockeyWidget::ensureWidgetsHaveBodies() {
 		  fixture->SetUserData(player2);
 	  }
 	  else{
-		  fixture->SetUserData(0);
+		  // This is the puck
+		  fixture->SetUserData(puckid);
 	  }
 	  
       m_bodies[*it] = body;
@@ -169,19 +198,31 @@ void AirHockeyWidget::updateBodiesToWidgets() {
 void AirHockeyWidget::checkScoring(){
 	Nimble::Vector2 center = puck->mapToParent(0.5f * puck->size());
 	bool scored = false;
+	char buffer[50];
 	if(center.x <= 0){
 		// Right player scores
-		rightScore++;
-		scored = true;
+		rightScore++;	
+		if(rightScore >= win_limit){
+			sendVictorySound(2);
+			sprintf(buffer, "Player 2 wins!");
+		}
+		else{
+			sendScoringSoundAndVibration(2);
+			sprintf(buffer, "%d    %d", leftScore, rightScore);
+		}
+		scorewidget->setText(buffer);
 	}
 	else if(center.x >= size().maximum()){
 		// Left player scores
 		leftScore++;
-		scored = true;
-	}
-	if(scored){
-		char buffer[50];
-		sprintf(buffer, "%d    %d", leftScore, rightScore);
+		if(leftScore >= win_limit){
+			sendVictorySound(1);
+			sprintf(buffer, "Player 1 wins!");
+		}
+		else{
+			sendScoringSoundAndVibration(1);
+			sprintf(buffer, "%d    %d", leftScore, rightScore);
+		}
 		scorewidget->setText(buffer);
 	}
 	// Restore all lost widgets to table

@@ -10,6 +10,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.widget.Toast;
 
+/**
+ * Class for implementing the Bluetooth client functionality.
+ * @author Veli-Pekka Kestilä, Markus Penttilä
+ *
+ */
 public class BluetoothClient{
 
 	private static final int REQUEST_ENABLE_BT = 3;
@@ -18,6 +23,11 @@ public class BluetoothClient{
 	private Hapticonoids activity;
 	private BluetoothSocket game = null;
 	
+	/**
+	 * Creates new Bluetooth client with message processors and current activity
+	 * @param eaterarray
+	 * @param activity
+	 */
 	public BluetoothClient(MessageEater[] eaterarray, Hapticonoids activity) {
 		this.activity = activity;
 		this.eaterarray = eaterarray;
@@ -37,6 +47,10 @@ public class BluetoothClient{
         
 	}
 	
+	/**
+	 * Query on paired devices for connecting.
+	 * @return
+	 */
 	public String[] getPairedDevices(){
 		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 		ArrayList<String> computers = new ArrayList<String>();
@@ -52,6 +66,11 @@ public class BluetoothClient{
 		return computers.toArray(new String[computers.size()]);
 	}
 
+	/**
+	 * Connect to the server as specified player.
+	 * @param device
+	 * @param player
+	 */
 	public void connect(String device, int player){
 		BluetoothThread btThread = new BluetoothThread(device, activity, game, mBluetoothAdapter, eaterarray, player);
 		new Thread(btThread).start();

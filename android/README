@@ -1,1 +1,16 @@
-Readme file for the Android version.
+This is the Android application used in the Hapticonoids haptic feedback test 
+project.
+
+Aplication uses Bluetooth to connect the server machine which is running 
+a game of Air Hockey. Client selects which players events it will listen 
+and then acts upon those events when it receives them.
+
+Currently client supports sound and vibration effects, but it could be 
+extended also to support on screen feedback of the game. 
+
+After compilation client should be uploaded to the phone and before running 
+phone should be paired with the Bluetooth adapter of the game machine. After
+this it will connect automatically to the right feedback server.
+
+Client needs atleast Android 2.2 to work and might have problems with some 
+phones containing broken bluetooth stack.

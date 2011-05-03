@@ -1,5 +1,7 @@
 package fi.hapticonoids;
 
+import java.util.ArrayList;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
@@ -7,7 +9,7 @@ import android.util.Log;
 
 /**
  * Class realizing the thread to process vibration events.
- * @author Veli-Pekka Kestilä, Markus Penttilä
+ * @author Veli-Pekka Kestilï¿½, Markus Penttilï¿½
  *
  */
 public final class VibratorThread extends Thread implements MessageEater {
@@ -17,7 +19,9 @@ public final class VibratorThread extends Thread implements MessageEater {
 	private static int type = 0;
 	private Hapticonoids hapticonoids;
 	
-	public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
+	//public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
+	
+	private ArrayList<VibrationPattern> patterns;
 	
 	/**
 	 * Constructor accepting the vibration resource and the main activity.
@@ -27,6 +31,27 @@ public final class VibratorThread extends Thread implements MessageEater {
 	public VibratorThread(Vibrator vibra, Hapticonoids hapticonoids) {
 		this.vibra = vibra;
 		this.hapticonoids = hapticonoids;
+		this.patterns = new ArrayList<VibrationPattern>();
+		// Create patterns to list
+		VibrationPattern temp = new VibrationPattern();
+		temp.addToSequence(false, 0);
+		patterns.add(temp);
+		
+		temp = new VibrationPattern();
+		temp.addToSequence(true, 200);
+		patterns.add(temp);
+		
+		temp = new VibrationPattern();
+		temp.addToSequence(true, 100);
+		temp.addToSequence(false, 50);
+		temp.addToSequence(true, 100);
+		patterns.add(temp);
+		
+		temp = new VibrationPattern();
+		temp.addToSequence(true, 400);
+		temp.addToSequence(false, 200);
+		temp.addToSequence(true, 400);
+		patterns.add(temp);
 	}
 	
 	/**
@@ -69,12 +94,55 @@ public final class VibratorThread extends Thread implements MessageEater {
 				hapticonoids.setInfoText("Vibrating!");
 				Log.i("Hapticonoids::VibratorThread","Vibrate!");
 				int vibrate_idx = 0;
-				if(id >= 0 && id < VIBRATION_LENGTH.length){
+				if(id >= 0 && id < patterns.size()){
 					vibrate_idx = id;
 				}
-				vibra.vibrate(VIBRATION_LENGTH[vibrate_idx]);
+				VibrationPattern pattern = patterns.get(vibrate_idx);
+				for(VibrationType type : pattern.getSequence()){
+					try{
+						if(type.vibrate){
+							vibra.vibrate(type.length);
+							Thread.sleep(type.length);
+						}
+						else{
+							// Pause in sequence
+							Thread.sleep(type.length);
+						}
+					}
+					catch(InterruptedException ie){
+						// Do nothing
+					}
+				}
+				
 			}
 		});
+	}
+	
+	private class VibrationType{
+		public boolean vibrate;
+		public int length;
+		
+		public VibrationType(boolean vibrate, int length){
+			this.vibrate = vibrate;
+			this.length = length;
+		}
+	}
+	
+	private class VibrationPattern{
+		
+		private ArrayList<VibrationType> sequence;
+		
+		public VibrationPattern(){
+			this.sequence = new ArrayList<VibrationType>();
+		}
+		
+		public void addToSequence(boolean vibrate, int length){
+			this.sequence.add(new VibrationType(vibrate, length));
+		}
+		
+		public ArrayList<VibrationType> getSequence(){
+			return this.sequence;
+		}
 	}
 	
 }

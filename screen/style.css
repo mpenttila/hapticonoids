@@ -3,7 +3,7 @@ AirHockeyWidget{
 	bluetooth: 1;
 	/* Mallet impact vibration type */
 	mallet-puck-vibration-type: 1;
-	mallet-wall-vibration-type: 1;
+	mallet-wall-vibration-type: 2;
 	/* Goal scoring vibration type */
 	scoring-vibration-type: 3;
 	/* Sounds */

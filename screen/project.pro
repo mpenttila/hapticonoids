@@ -1,4 +1,4 @@
-SOURCES += Main.cpp airhockeywidget.cpp malletwidget.cpp puckwidget.cpp contactlistener.cpp hapticfeedback.cpp
+SOURCES += Main.cpp airhockeywidget.cpp contactlistener.cpp hapticfeedback.cpp
 
 CONFIG += release
 CONFIG -= qt

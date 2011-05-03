@@ -2,9 +2,17 @@ AirHockeyWidget{
 	/* Use bluetooth? */
 	bluetooth: 1;
 	/* Mallet impact vibration type */
-	vibration-type: 1;
+	mallet-puck-vibration-type: 1;
+	mallet-wall-vibration-type: 1;
 	/* Goal scoring vibration type */
-	scoring-type: 1;
+	scoring-vibration-type: 3;
+	/* Sounds */
+	scoring-sound-type: 3;
+	puck-hit-sound-type: 1;
+	wall-hit-sound-type: 2;
+	victory-sound-type: 3;
+	/* Score needed for victory */
+	win-limit: 10;
 }
 
 TextBox {

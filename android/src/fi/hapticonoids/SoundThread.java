@@ -7,7 +7,7 @@ import android.os.Looper;
 
 /**
  * This class implements thread which will play the sound effects from the player.
- * @author Veli-Pekka Kestilä, Markus Penttilä
+ * @author Veli-Pekka Kestilï¿½, Markus Penttilï¿½
  *
  */
 public class SoundThread extends Thread implements MessageEater {
@@ -16,7 +16,7 @@ public class SoundThread extends Thread implements MessageEater {
 	private static int type = 1;
 	Hapticonoids hapticonoids = null;
 	SoundPool sounds = null;
-	int[] soundsIndex = new int[5];
+	int[] soundsIndex = new int[6];
 
 	public SoundThread(Hapticonoids hapticonoids) {
 		this.hapticonoids = hapticonoids;

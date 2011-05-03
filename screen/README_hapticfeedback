@@ -1,0 +1,44 @@
+
+Description of hapticfeedback[.cpp|.hpp]
+
+HapticFeedback class works as a C++ interface for sending haptic
+feedback to the AndroidClient it can be used separatedly from the
+rest of the software and offers reasonably clean and simple interface.
+
+The library has following methods:
+
+HapticFeedback()  
+	Constructor to create new HapticFeedback element.
+~HapticFeedback() 
+	Desctructor.
+
+bool init()       
+	Initialize the BlueTooth connectivity and start listening BlueTooth socket.
+int getClient()
+	Accept new client.
+void sendMessage(int client, int type, int id)
+    Sends message to specified client with type and event id.    
+void sendMessageToPlayer(int player, int type, int id)
+	Sends message to specified player.
+
+sdp_session_t *registerService()
+	Publishes our BlueTooth service so that clients can find it through BT 
+	service discovery.
+void unregisterService(sdp_session_t *session)
+	Stop publishing the service.
+        
+vector<int> p1_clients;
+	Vector containing player one clients.
+vector<int> p2_clients;
+	Vector containing player two clients.
+	
+And it can be used with following code:
+	HapticFeedback hf = new HapticFeedback();
+	sdp_session_t session = hf.registerService();	
+	int client1 = getClient();
+	hf.sendMessage(client1, 0, 0);
+	hf.unregisterService(session);
+	delete hf;
+
+
+	

@@ -1,13 +1,152 @@
-See http://cornerstone.multitouch.fi/multitouch-cornerstone-c-programming/compilingides 
-for compiling guidelines on different platforms.
+Department of Computer Science
+University of Helsinki
 
-On OSX see http://cornerstone.multitouch.fi/installing-os-x
-and do:
-qmake -spec macx-g++
-make
+Interactive Systems course project
 
-Needs Box2D to be installed.
+HAPTICONOIDS - Multi-touch multimodal air hockey
 
-Run:
-./AirHockey
+The project explores localized audio and haptic feedback in an air
+hockey game on a large multi-touch screen. Localized feedback is 
+provided via players' Android handsets.
+
+Authors: Veli-Pekka Kestilä
+         Markus Penttilä
+         Harri Hurme
+         Lirim Osmani 
+
+
+
+READ ME AND TECHNICAL DOCUMENTATION FOR THE GAME PROGRAM
+
+
+System requirements:
+
+Linux (tested on Ubuntu 10.04 and 10.10)
+OpenGL graphics card
+Cornerstone runtime (http://cornerstone.multitouch.fi/)
+Box2D physics library
+BlueZ Bluetooth library
+POSIX threads (pthreads)
+
+Requirements for compiling:
+
+Developement libraries of the above
+Cornerstone SDK
+
+
+ Usage
+=======
+
+The compiled program can be run by executing:
+
+ hapticonoids/screen/AirHockey
+
+Bluetooth devices that are going to be used to provide sound and haptic
+feedback must be paired with the PC running the game before starting 
+the game. After the game has started, devices can connect to it by 
+executing the Hapticonoids Android application.
+
+
+ Configuration
+===============
+
+Program parameters can be changed from the file style.css. This allows
+to change the ID of the vibration and sound effects associated with 
+different game events, and to set the goal limit needed for victory.
+
+
+Program structure
+=================
+
+The application is written in C++ and consists of three classes and the
+Main program.
+
+
+airhockeywidget[.cpp|.hpp]
+==========================
+
+These files contain the definition and implementation of AirHockeyWidget
+class, which contains the main logic of the game. It inherits 
+MultiWidgets:Widget, which is a base class provided by the Cornerstone
+SDK. It overrides input and update methods from the Widget class and 
+uses those to implement input to, and movement in the Box2D physics 
+world. After the physics calculation the ImageWidgets representing the 
+mallets and the puck are centered on the Box2D fixtures.
+
+AirHockeyWidget also contains methods to check goal scoring and to send
+sound and vibration messages to phone clients according to game events.
+
+
+contactlistener[.cpp|.hpp]
+==========================
+
+These files define and implement the ContactListener class, which 
+extends Box2D framework's b2ContactListener class. It handles the logic 
+of reacting to collisions in the physics simulation, i.e. impact of the
+mallets and the puck with each other or the table walls. Depending on 
+the nature of the contact it calls AirHockeyWidget's sendPuckHit(player)
+or sendWallHit(player) methods.
+
+
+Main.cpp
+========
+
+Main.cpp contains the main function. It initializes the game application
+as Cornerstone SDK's MultiWidgets::SimpleSDLApplication. It creates 
+ImageWidgets that contain the game table background, mallets and the 
+puck. It also sets the initial positions for all widgets and creates the
+TextBox widgets containing player names and the current score.
+
+
+hapticfeedback[.cpp|.hpp]
+=========================
+
+HapticFeedback class works as a C++ interface for sending haptic
+feedback to the AndroidClient. It can be used separatedly from the
+rest of the software and offers reasonably clean and simple interface.
+
+It uses POSIX threads to wait for clients in the background without 
+blocking the application. Currently the server only waits for two
+clients to connect, but it could be changed to allow an arbitrary 
+number of clients. The selection of which players events a phone 
+receives is done in the Android app's UI.
+
+The library has following methods:
+
+HapticFeedback()  
+	Constructor to create new HapticFeedback element.
+~HapticFeedback() 
+	Desctructor.
+
+bool init()       
+	Initialize the Bluetooth connectivity and start listening 
+        Bluetooth socket.
+int getClient()
+	Accept new client.
+void sendMessage(int client, int type, int id)
+        Sends message to specified client with type and event id.    
+void sendMessageToPlayer(int player, int type, int id)
+	Sends message to specified player.
+
+sdp_session_t *registerService()
+	Publishes our Bluetooth service so that clients can find it 
+        through BT service discovery.
+void unregisterService(sdp_session_t *session)
+	Stop publishing the service.
+        
+vector<int> p1_clients;
+	Vector containing player one clients.
+vector<int> p2_clients;
+	Vector containing player two clients.
+	
+And it can be used with following code:
+	HapticFeedback hf = new HapticFeedback();
+	sdp_session_t session = hf.registerService();	
+	int client1 = getClient();
+	hf.sendMessage(client1, 0, 0);
+	hf.unregisterService(session);
+	delete hf;
+
+
+
 

@@ -1,3 +1,8 @@
+
+Hapticonoids
+
+*** General information
+
 This is the Android application used in the Hapticonoids haptic feedback test 
 project.
 
@@ -8,9 +13,43 @@ and then acts upon those events when it receives them.
 Currently client supports sound and vibration effects, but it could be 
 extended also to support on screen feedback of the game. 
 
-After compilation client should be uploaded to the phone and before running 
+After compilation client should be uploaded to the phone and before running it 
 phone should be paired with the Bluetooth adapter of the game machine. After
-this it will connect automatically to the right feedback server.
+this user can select from the list of paired feedback servers.
 
 Client needs atleast Android 2.2 to work and might have problems with some 
 phones containing broken bluetooth stack.
+
+*** Implementation details 
+
+Client consist of 5 classes and one Interface definition.
+
+Main activity is in Hapticonoids.java which is responsible for initializing
+Bluetooth(BluetoothClient), SoundThread and VibratorThread. Both Sound and Vibrator
+-Threads implement MessageEater interface which BluetoothThread(Initialized by 
+BluetoothClient) will use to send the actual sound and vibration events to the 
+system.
+
+Closer details of the classes and their relations can be acquired from the 
+accompanying JavaDoc-documentation.
+
+Client has also been created easily extensible. Implemented can add new sounds to the 
+SoundThread class with new ID's and also similarly new vibration patterns to the 
+VibratorThread class. Only thing after this needed is to recompile the project 
+and add the client to the users phone. Of course on the server side sending the
+feedback information need to be added events sending the new 
+(feedback type, feedback id)-pairs. 
+
+Client also supports adding complete new feedback paradigms by adding
+XThread.java which will implement it and adding it to the MessageEater
+list given for the BluetoothClient.
+
+Because of this architecture it is very easy to adapt this client to the new
+usage patterns and for the new solutions needing haptic or other user localized 
+feedback. 
+
+Current feedback types supported are:
+	- 0 for vibrations
+	- 1 for sounds
+
+  

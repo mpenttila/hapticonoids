@@ -120,7 +120,7 @@ void AirHockeyWidget::ensureWidgetsHaveBodies() {
  	  
 	  if(*it == puck){
 		fixtureDef.friction = 0.9f;
-		fixtureDef.restitution = 0.98f;
+		fixtureDef.restitution = 1.0f;
 		fixtureDef.density = 10.0f;
 		body->SetLinearDamping(0.4f);
 	  }
@@ -202,9 +202,11 @@ void AirHockeyWidget::checkScoring(){
 	if(center.x <= 0){
 		// Right player scores
 		rightScore++;	
-		if(rightScore >= win_limit){
+		if(rightScore == win_limit){
 			sendVictorySound(2);
 			sprintf(buffer, "Player 2 wins!");
+			rightScore = 0;
+			leftScore = 0;
 		}
 		else{
 			sendScoringSoundAndVibration(2);
@@ -215,9 +217,11 @@ void AirHockeyWidget::checkScoring(){
 	else if(center.x >= size().maximum()){
 		// Left player scores
 		leftScore++;
-		if(leftScore >= win_limit){
+		if(leftScore == win_limit){
 			sendVictorySound(1);
 			sprintf(buffer, "Player 1 wins!");
+			rightScore = 0;
+			leftScore = 0;
 		}
 		else{
 			sendScoringSoundAndVibration(1);

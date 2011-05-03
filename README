@@ -1,3 +1,11 @@
-TODO: Write proper README.
+HAPTICONOIDS - Multi-touch multimodal air hockey
+Project for University of Helsinki CS Dept. course Interactive Systems
 
-Repository for CS course Interactive Systems project Hapticonoids.
+The project explores localized audio and haptic feedback in an air
+hockey game on a large multi-touch screen. Localized feedback is 
+provided via players' Android handsets.
+
+See separate READMEs in subdirectories android (Android app) and 
+screen (multi-touch display app) for technical documentation.
+
+

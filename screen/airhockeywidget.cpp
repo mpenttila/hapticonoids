@@ -9,29 +9,30 @@
 #define MALLET2_VERTICAL_FRACTION 0.85f
 
 AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
-  MultiWidgets::ImageWidget(parent),
-  m_world(b2Vec2(0,0), true),
-  leftScore(0),
-  rightScore(0),
-  mallet_puck_vibration_type(this, "mallet-puck-vibration-type", 0),
-  mallet_wall_vibration_type(this, "mallet-wall-vibration-type", 0),
-  scoring_vibration_type(this, "scoring-vibration-type", 0),
-  scoring_sound_type(this, "scoring-sound-type", 0),
-  wall_hit_sound_type(this, "wall-hit-sound-type", 0),
-  puck_hit_sound_type(this, "puck-hit-sound-type", 0),
-  victory_sound_type(this, "victory-sound-type", 0),
-  win_limit(this, "win-limit", 0),
-  use_bluetooth(this, "bluetooth", 0),
-  logger()
-{
-  setCSSType("AirHockeyWidget");
-  w = h = 0;
-  contactListener = new ContactListener(this);
-  m_world.SetContactListener(contactListener);
-  player1 = new int(P1_MALLET);
-  player2 = new int(P2_MALLET);
-  puckid = new int(PUCK);
-}
+	MultiWidgets::ImageWidget(parent),
+	m_world(b2Vec2(0,0), true),
+	leftScore(0),
+	rightScore(0),
+	mallet_puck_vibration_type(this, "mallet-puck-vibration-type", 0),
+	mallet_wall_vibration_type(this, "mallet-wall-vibration-type", 0),
+	scoring_vibration_type(this, "scoring-vibration-type", 0),
+	scoring_sound_type(this, "scoring-sound-type", 0),
+	wall_hit_sound_type(this, "wall-hit-sound-type", 0),
+	puck_hit_sound_type(this, "puck-hit-sound-type", 0),
+	victory_sound_type(this, "victory-sound-type", 0),
+	win_limit(this, "win-limit", 0),
+	use_bluetooth(this, "bluetooth", 0)
+	{
+		setCSSType("AirHockeyWidget");
+		w = h = 0;
+		contactListener = new ContactListener(this);
+		m_world.SetContactListener(contactListener);
+		player1 = new int(P1_MALLET);
+		player2 = new int(P2_MALLET);
+		puckid = new int(PUCK);
+		highscore = new HighscoreWidget();
+		highscore->setLocation(size().maximum() * 0.5f, size().minimum() * 0.1f);
+	}
 
 AirHockeyWidget::~AirHockeyWidget(){
 	if(service > 0){
@@ -66,6 +67,17 @@ void AirHockeyWidget::initBluetooth(){
 void AirHockeyWidget::startGame(int _feedbackMode){
 	feedbackMode = _feedbackMode;
 	logger.startGame(feedbackName[feedbackMode], "Arska", "Jorma");
+}
+
+void AirHockeyWidget::endGame(int player){
+	sendVictorySound(player);
+	char buffer[50];
+	sprintf(buffer, "Player %d wins!", player);
+	logger.endGame(player, leftScore, rightScore);
+	highscore->insertScore("Arska", 30);
+	rightScore = 0;
+	leftScore = 0;
+	highscore->displayScores();
 }
 
 void AirHockeyWidget::sendPuckHit(int player){
@@ -210,10 +222,7 @@ void AirHockeyWidget::checkScoring(){
 		logger.logGoal(2);
 		rightScore++;	
 		if(rightScore == win_limit){
-			sendVictorySound(2);
-			sprintf(buffer, "Player 2 wins!");
-			rightScore = 0;
-			leftScore = 0;
+			endGame(2);
 		}
 		else{
 			sendScoringSoundAndVibration(2);
@@ -226,10 +235,7 @@ void AirHockeyWidget::checkScoring(){
 		logger.logGoal(1);
 		leftScore++;
 		if(leftScore == win_limit){
-			sendVictorySound(1);
-			sprintf(buffer, "Player 1 wins!");
-			rightScore = 0;
-			leftScore = 0;
+			endGame(1);
 		}
 		else{
 			sendScoringSoundAndVibration(1);

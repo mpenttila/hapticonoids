@@ -10,19 +10,25 @@
 struct Highscore {
 	std::string name;
 	int seconds;
-}
+	bool operator<(const Highscore& other) const
+    {
+        return (seconds <= other.seconds);
+    }
+};
 
-class HighscoreWidget : public MultiWidgets::TextBox {
+class HighscoreWidget : public MultiWidgets::Widget {
 	
 	private:
 		std::vector<Highscore> highscores;
+		std::vector<MultiWidgets::TextBox*> scoreWidgets;
 		
 	public:
 		HighscoreWidget();
 		~HighscoreWidget();
 		
-		void insertScore(string name, int seconds);
-			
+		void insertScore(std::string name, int seconds);
+		void displayScores();
+		void hideScores();
 	
 };
 

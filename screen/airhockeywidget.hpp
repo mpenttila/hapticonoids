@@ -12,6 +12,7 @@
 #include "contactlistener.hpp"
 #include "hapticfeedback.hpp"
 #include "logger.hpp"
+#include "highscorewidget.hpp"
 
 #define P1_MALLET 1
 #define P2_MALLET 2
@@ -56,7 +57,7 @@ public:
   
   void initGame();
   void startGame(int _feedbackMode);
-  void endGame();
+  void endGame(int player);
 
   int w, h;
   std::set<long> m_currentFingerIds;
@@ -96,6 +97,7 @@ public:
   Valuable::ValueInt use_bluetooth;
   
   Logger logger;
+  HighscoreWidget * highscore;
 };
 
 

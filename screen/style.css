@@ -21,3 +21,9 @@ TextBox {
 	foreground: #FFFFFF;
 }
 
+Highscore {
+	font-name: "DroidSans-Bold.ttf";
+	font-size: 72px;
+	color: #FFAA00FF;
+	foreground: #FFFFFF;
+}

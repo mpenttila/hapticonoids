@@ -30,8 +30,6 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
 		player1 = new int(P1_MALLET);
 		player2 = new int(P2_MALLET);
 		puckid = new int(PUCK);
-		highscore = new HighscoreWidget();
-		highscore->setLocation(size().maximum() * 0.5f, size().minimum() * 0.1f);
 	}
 
 AirHockeyWidget::~AirHockeyWidget(){
@@ -73,11 +71,22 @@ void AirHockeyWidget::endGame(int player){
 	sendVictorySound(player);
 	char buffer[50];
 	sprintf(buffer, "Player %d wins!", player);
+	scorewidget->setText(buffer);
 	logger.endGame(player, leftScore, rightScore);
 	highscore->insertScore("Arska", 30);
 	rightScore = 0;
 	leftScore = 0;
 	highscore->displayScores();
+}
+
+void AirHockeyWidget::processMessage(const char * id, Radiant::BinaryData & data)
+{
+	if(strcmp(id, "start0") == 0) {
+		std::cout << "start 0 pressed" << endl;
+	}
+	else {
+		Widget::processMessage(id, data);
+    }
 }
 
 void AirHockeyWidget::sendPuckHit(int player){
@@ -227,6 +236,7 @@ void AirHockeyWidget::checkScoring(){
 		else{
 			sendScoringSoundAndVibration(2);
 			sprintf(buffer, "%d    %d", leftScore, rightScore);
+			scorewidget->setText(buffer);
 		}
 		scorewidget->setText(buffer);
 	}
@@ -240,8 +250,8 @@ void AirHockeyWidget::checkScoring(){
 		else{
 			sendScoringSoundAndVibration(1);
 			sprintf(buffer, "%d    %d", leftScore, rightScore);
+			scorewidget->setText(buffer);
 		}
-		scorewidget->setText(buffer);
 	}
 	// Restore all lost widgets to table
 	for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {

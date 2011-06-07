@@ -3,13 +3,19 @@
 
 using namespace std;
 
-HighscoreWidget::HighscoreWidget(){
-	ifstream file("highscore.txt");
+HighscoreWidget::HighscoreWidget(MultiWidgets::Widget * parent) : 
+	MultiWidgets::Widget(parent),
+	widgetsInitialized(false)
+{
+	ifstream file("highscores.txt");
 	if(file.is_open()){
 		// Read existing highscores
 		string line;
 		while(file.good()){
 			getline(file, line);
+			if(line.length() < 3) {
+				continue;
+			}
 			size_t found = line.find_last_of(":");
 			string name(line.substr(0, found));
 			int score = atoi(line.substr(found + 1).c_str());
@@ -20,16 +26,11 @@ HighscoreWidget::HighscoreWidget(){
 		file.close();
 	}
 	setInputTransparent(true);
-	this->setCSSType("Highscore");
+	setCSSType("Highscore");
+	setWidth(400);
+	setHeight(300);
+	setColor(0,0,0,0);
 	
-	for(int i = 0; i < 10; i++){
-		MultiWidgets::TextBox * tb = new MultiWidgets::TextBox(this, 0, MultiWidgets::TextBox::HCENTER);
-		scoreWidgets.push_back(tb);
-		tb->setInputTransparent(true);
-        int scorewidth = tb->totalTextAdvance() + 100;
-        tb->setWidth(scorewidth);
-        tb->setLocation(size().maximum() * 0.5f - scorewidth/2 - 5, size().minimum() * 0.1f + i * 0.1f);
-	}
 }
 
 HighscoreWidget::~HighscoreWidget(){
@@ -58,6 +59,22 @@ string convertInt(int number)
 }
 
 void HighscoreWidget::displayScores(){
+	if(!widgetsInitialized){
+		for(int i = 0; i < 10; i++){
+			MultiWidgets::TextBox * tb = new MultiWidgets::TextBox(this, 0, MultiWidgets::TextBox::HCENTER);
+			scoreWidgets.push_back(tb);
+			tb->setCSSType("ScoreTextBox");
+			tb->setStyle(_style);
+			tb->setInputTransparent(true);
+			int scorewidth = 300;
+			tb->setText(convertInt(i+1) + ". ");
+			tb->setWidth(scorewidth);
+			tb->setHeight(30);
+			tb->setLocation(size().maximum() * 0.5f - scorewidth/2 - 5, 0 + 40 * i);
+			tb->show();
+		}
+		widgetsInitialized = true;
+	}
 	vector<Highscore>::iterator i = highscores.begin();
 	int count = 0;
 	while (i < highscores.end() && count < 10){
@@ -75,6 +92,11 @@ void HighscoreWidget::hideScores(){
 		MultiWidgets::TextBox * tb = *i;
 		tb->hide();
 	}
+}
+
+void HighscoreWidget::setStyle(const Fluffy::StyleSheet & style){
+	MultiWidgets::Widget::setStyle(style);
+	_style = style;
 }
 
 

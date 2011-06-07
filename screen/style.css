@@ -12,7 +12,7 @@ AirHockeyWidget{
 	wall-hit-sound-type: 2;
 	victory-sound-type: 3;
 	/* Score needed for victory */
-	win-limit: 5;
+	win-limit: 2;
 }
 
 TextBox {
@@ -21,9 +21,21 @@ TextBox {
 	foreground: #FFFFFF;
 }
 
-Highscore {
+ScoreTextBox {
 	font-name: "DroidSans-Bold.ttf";
-	font-size: 72px;
-	color: #FFAA00FF;
-	foreground: #FFFFFF;
+	font-size: 36px;
+	color: #DDDDDDFF;
+	foreground: #0000FFFF;
+}
+
+StartButton {
+	padding: 10px;
+	font-name: "DroidSans-Bold.ttf";
+	font-size: 18px;
+	color: #00FF00FF;
+	border-width: 3px;
+	border-color: #000000FF;
+	height: 70px;
+	width: 100px;
+	foreground: #000000FF;
 }

@@ -4,6 +4,7 @@
 #include <MultiWidgets/ImageWidget.hpp>
 #include <MultiWidgets/TextBox.hpp>
 #include <Radiant/Grid.hpp>
+#include <Radiant/BinaryData.hpp>
 #include <Luminous/Utils.hpp>
 #include <Box2D/Box2D.h>
 
@@ -98,6 +99,8 @@ public:
   
   Logger logger;
   HighscoreWidget * highscore;
+  virtual void processMessage(const char * id, Radiant::BinaryData & data);
+  
 };
 
 

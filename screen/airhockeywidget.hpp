@@ -11,6 +11,7 @@
 
 #include "contactlistener.hpp"
 #include "hapticfeedback.hpp"
+#include "logger.hpp"
 
 #define P1_MALLET 1
 #define P2_MALLET 2
@@ -79,6 +80,8 @@ public:
   Valuable::ValueInt victory_sound_type;
   Valuable::ValueInt win_limit;
   Valuable::ValueInt use_bluetooth;
+  
+  Logger logger;
 };
 
 

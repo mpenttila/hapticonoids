@@ -21,7 +21,8 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
   puck_hit_sound_type(this, "puck-hit-sound-type", 0),
   victory_sound_type(this, "victory-sound-type", 0),
   win_limit(this, "win-limit", 0),
-  use_bluetooth(this, "bluetooth", 0)
+  use_bluetooth(this, "bluetooth", 0),
+  logger()
 {
   setCSSType("AirHockeyWidget");
   w = h = 0;

@@ -12,7 +12,7 @@ AirHockeyWidget{
 	wall-hit-sound-type: 2;
 	victory-sound-type: 3;
 	/* Score needed for victory */
-	win-limit: 10;
+	win-limit: 5;
 }
 
 TextBox {

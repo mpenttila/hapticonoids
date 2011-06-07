@@ -63,6 +63,11 @@ void AirHockeyWidget::initBluetooth(){
 	}
 }
 
+void AirHockeyWidget::startGame(int _feedbackMode){
+	feedbackMode = _feedbackMode;
+	logger.startGame(feedbackName[feedbackMode], "Arska", "Jorma");
+}
+
 void AirHockeyWidget::sendPuckHit(int player){
 	if(use_bluetooth == 1){
 		// int player_number, int message_type, int message_id
@@ -202,6 +207,7 @@ void AirHockeyWidget::checkScoring(){
 	char buffer[50];
 	if(center.x <= 0){
 		// Right player scores
+		logger.logGoal(2);
 		rightScore++;	
 		if(rightScore == win_limit){
 			sendVictorySound(2);
@@ -217,6 +223,7 @@ void AirHockeyWidget::checkScoring(){
 	}
 	else if(center.x >= size().maximum()){
 		// Left player scores
+		logger.logGoal(1);
 		leftScore++;
 		if(leftScore == win_limit){
 			sendVictorySound(1);

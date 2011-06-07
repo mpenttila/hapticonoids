@@ -19,6 +19,7 @@ class Logger {
 		time_t startTime;
 		struct tm * localStartTime;
 		ofstream logstream;
+		int gameNumber;
 	
 	public:
 		Logger();

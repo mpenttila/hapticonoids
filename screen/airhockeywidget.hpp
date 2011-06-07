@@ -17,6 +17,12 @@
 #define P2_MALLET 2
 #define PUCK 3
 
+#define FEEDBACK_OFF 0
+#define FEEDBACK_BOTH 1
+#define FEEDBACK_P1 2
+#define FEEDBACK_P2 3
+#define feedbackName (const char*[4]){"haptic feedback off", "haptic feedback to both", "haptic feedback to P1", "haptic feedback to P2" }
+
 class ContactListener;
 
 namespace {
@@ -26,6 +32,10 @@ class AirHockeyWidget : public MultiWidgets::ImageWidget {
   // ensure appropriate scale for box2d
   static Nimble::Vector2 fromBox2D(const b2Vec2 & v) { return Nimble::Vector2(v.x, v.y)*BOX2D_SCALE; }
   static b2Vec2 toBox2D(const Nimble::Vector2 & v) { return b2Vec2(v.x/BOX2D_SCALE, v.y/BOX2D_SCALE); }
+  
+private:
+	int feedbackMode;
+  
 public:
 
   AirHockeyWidget(MultiWidgets::Widget * parent = 0);
@@ -43,6 +53,10 @@ public:
   void sendVictorySound(int player);
 
   void input(MultiWidgets::GrabManager & gm, float dt);
+  
+  void initGame();
+  void startGame(int _feedbackMode);
+  void endGame();
 
   int w, h;
   std::set<long> m_currentFingerIds;

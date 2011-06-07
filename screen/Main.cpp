@@ -136,6 +136,8 @@ int main(int argc, char ** argv)
    p2->setLocation(app.size().maximum() * 0.9f, app.size().minimum() - p2->totalTextAdvance());
    
    gw->initBluetooth();
+   
+   gw->startGame(1);
 
    // Run the application:
    return app.run();

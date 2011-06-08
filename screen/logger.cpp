@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "logger.hpp"
-#include "utf8.h"
 
 Logger::Logger() : gameNumber(0) {
 	time(&startTime);

@@ -13,21 +13,20 @@ using namespace std;
 
 class Logger {
 	private:
-		string player1Name;
-		string player2Name;
-		string gameMode;
+		wstring player1Name;
+		wstring player2Name;
 		time_t startTime;
 		struct tm * localStartTime;
-		ofstream logstream;
+		wofstream logstream;
 		int gameNumber;
 	
 	public:
 		Logger();
 		~Logger();
 		
-		void startGame(string mode, string _player1Name, string _player2Name);
+		void startGame(string mode, wstring _player1Name, wstring _player2Name);
 		void logGoal(int player);
-		void endGame(int winner, int player1Goals, int player2Goals);
+		long endGame(int winner, int player1Goals, int player2Goals);
 	
 };
 

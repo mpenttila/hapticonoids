@@ -10,7 +10,7 @@
 
 struct Highscore {
 	std::string name;
-	int seconds;
+	long seconds;
 	bool operator<(const Highscore& other) const
     {
         return (seconds <= other.seconds);
@@ -29,7 +29,7 @@ class HighscoreWidget : public MultiWidgets::Widget {
 		HighscoreWidget(MultiWidgets::Widget * parent = 0);
 		~HighscoreWidget();
 		
-		void insertScore(std::string name, int seconds);
+		void insertScore(std::string name, long seconds);
 		void displayScores();
 		void hideScores();
 	

@@ -21,15 +21,28 @@ TextBox {
 	foreground: #FFFFFF;
 }
 
+Highscore{
+	color: #FFFFFF80;
+}
+
+HighscoreTitle{
+	font-name: "DroidSans-Bold.ttf";
+	font-size: 30px;
+	color: #FFFFFF00;
+	foreground: #000000FF;
+	width: 480px;
+	height: 30px;
+}
+
 ScoreTextBox {
 	font-name: "DroidSans-Bold.ttf";
-	font-size: 36px;
-	color: #DDDDDDFF;
-	foreground: #0000FFFF;
+	font-size: 26px;
+	color: #FFFFFF00;
+	foreground: #000000FF;
 }
 
 StartButton {
-	padding: 10px;
+	padding: 0;
 	font-name: "DroidSans-Bold.ttf";
 	font-size: 18px;
 	color: #00FF00FF;
@@ -42,5 +55,21 @@ StartButton {
 
 NameInput {
 	font-name: "DroidSans-Bold.ttf";	
-	font-size: 18px;
+	font-size: 24px;
+	foreground: #FFFFFF;
+	color: #FFFFFF00;
+}
+
+NameInputLabel {
+	font-name: "DroidSans-Bold.ttf";
+	font-size: 36px;
+	foreground: #FFFFFF;
+	color: #FFFFFF00;
+}
+
+WinnerLabel{
+	font-name: "DroidSans-Bold.ttf";	
+	font-size: 64px;
+	foreground: #FF0000;
+	color: #FFFFFF00;
 }

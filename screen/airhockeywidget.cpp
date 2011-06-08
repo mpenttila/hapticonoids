@@ -9,7 +9,7 @@
 #define MALLET1_VERTICAL_FRACTION 0.15f
 #define MALLET2_VERTICAL_FRACTION 0.85f
 
-AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent, Hapticonoids * _app) :
+AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
 	MultiWidgets::ImageWidget(parent),
 	m_world(b2Vec2(0,0), true),
 	leftScore(0),
@@ -18,12 +18,11 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent, Hapticonoids * _
 	mallet_wall_vibration_type(this, "mallet-wall-vibration-type", 0),
 	scoring_vibration_type(this, "scoring-vibration-type", 0),
 	scoring_sound_type(this, "scoring-sound-type", 0),
-	wall_hit_sound_type(this, "wall-hit-sound-type", 0),
 	puck_hit_sound_type(this, "puck-hit-sound-type", 0),
+	wall_hit_sound_type(this, "wall-hit-sound-type", 0),
 	victory_sound_type(this, "victory-sound-type", 0),
 	win_limit(this, "win-limit", 0),
-	use_bluetooth(this, "bluetooth", 0),
-	app(_app)
+	use_bluetooth(this, "bluetooth", 0)
 	{
 		setCSSType("AirHockeyWidget");
 		w = h = 0;
@@ -32,6 +31,8 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent, Hapticonoids * _
 		player1 = new int(P1_MALLET);
 		player2 = new int(P2_MALLET);
 		puckid = new int(PUCK);
+		names[0] = "Player 1";
+		names[1] = "Player 2";
 	}
 
 AirHockeyWidget::~AirHockeyWidget(){
@@ -65,32 +66,77 @@ void AirHockeyWidget::initBluetooth(){
 }
 
 void AirHockeyWidget::initGame(int _feedbackMode){
+	feedbackMode = _feedbackMode;
 	b0->hide();
 	b1->hide();
 	b2->hide();
 	b3->hide();
-	highscore->hideScores();
+	highscore->hide();
+	//highscore->hideScores();
+	text1Label->show();
 	text1->show();
 	text1->createKeyboard();
+	text2Label->show();
 	text2->show();
 	text2->createKeyboard();
+	b4->show();
 }
 
-void AirHockeyWidget::startGame(int _feedbackMode){
-	feedbackMode = _feedbackMode;
-	logger.startGame(feedbackName[feedbackMode], "Arska", "Jorma");
+void AirHockeyWidget::startGame(){
+	b4->hide();
+	text1->hideKeyboard();
+	text1->hide();
+	text1Label->hide();
+	text2->hideKeyboard();
+	text2->hide();
+	text2Label->hide();
+	winnerLabel->hide();
+	std::wstring p1Name(text1->text());
+	if(p1Name.length() < 1){
+		p1Name = (L"Player 1");
+	}
+	std::wstring p2Name(text2->text());
+	if(p2Name.length() < 1){
+		p2Name = (L"Player 2");
+	}
+	p1->setText(p1Name);
+	std::string p1String(p1Name.length(), ' '); 
+	copy(p1Name.begin(), p1Name.end(), p1String.begin());
+	names[0] = p1String;
+	p1->show();
+	p2->setText(p2Name);
+	std::string p2String(p2Name.length(), ' ');
+	copy(p2Name.begin(), p2Name.end(), p2String.begin());
+	names[1] = p2String;
+	p2->show();
+	mallet1->show();
+	mallet2->show();
+	puck->show();
+	rightScore = 0;
+	leftScore = 0;
+	scorewidget->setText(std::string("0    0"));
+	scorewidget->show();
+	logger.startGame(feedbackName[feedbackMode], p1Name, p2Name);
 }
 
 void AirHockeyWidget::endGame(int player){
-	sendVictorySound(player);
+	long wintime = logger.endGame(player, leftScore, rightScore);
+	sendVictorySound(player);	
 	char buffer[50];
-	sprintf(buffer, "Player %d wins!", player);
-	scorewidget->setText(buffer);
-	logger.endGame(player, leftScore, rightScore);
-	highscore->insertScore("Arska", 30);
-	rightScore = 0;
-	leftScore = 0;
+	sprintf(buffer, " wins %d - %d!", leftScore, rightScore);
+	winnerLabel->setText(names[player-1] + buffer);
+	winnerLabel->show();
+	highscore->insertScore(names[player-1], wintime);
+	scorewidget->hide();
+	mallet1->hide();
+	mallet2->hide();
+	puck->hide();
+	highscore->show();
 	highscore->displayScores();
+	b0->show();
+	b1->show();
+	b2->show();
+	b3->show();
 }
 
 void AirHockeyWidget::processMessage(const char * id, Radiant::BinaryData & data)
@@ -107,13 +153,16 @@ void AirHockeyWidget::processMessage(const char * id, Radiant::BinaryData & data
 	else if(strcmp(id, "start3") == 0) {
 		initGame(3);
 	}
+	else if(strcmp(id, "startGame") == 0) {
+		startGame();
+	}
 	else {
 		Widget::processMessage(id, data);
     }
 }
 
 void AirHockeyWidget::sendPuckHit(int player){
-	if(use_bluetooth == 1){
+	if(use_bluetooth == 1 && feedbackMode > 0){
 		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 1, puck_hit_sound_type);
 		hf.sendMessageToPlayer(player, 0, mallet_puck_vibration_type);

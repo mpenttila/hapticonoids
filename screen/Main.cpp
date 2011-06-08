@@ -33,32 +33,12 @@
 class Hapticonoids : public MultiWidgets::SimpleSDLApplication
 {
 	typedef MultiWidgets::SimpleSDLApplication Parent;
-	
-	class Receiver : public virtual MultiWidgets::Widget
-	{
-		public:
-		// Normal constructor
-		Receiver(MultiWidgets::Widget * parent)
-			: Widget(parent)
-		{
-			// Make this widget ignore all input
-			setInputFlags(0);
-		}
-		virtual ~Receiver() {}
-		
-		virtual void processMessage(const char * id, Radiant::BinaryData & data)
-		{
-			if(strcmp(id, "jump") == 0) {
-			}
-		}
-	};
 
 private:
 	AirHockeyWidget * gw;
 	MultiWidgets::ImageWidget * mallet1, * mallet2, * puck;
 	MultiWidgets::TextBox * p1, * p2;
-	MultiWidgets::TextBox * b0, * b1, * b2, * b3;
-	MultiWidgets::Keyboard * kb1, * kb2;
+	MultiWidgets::TextBox * b0, * b1, * b2, * b3, * b4;
 	MultiWidgets::TextEdit * text1, * text2;
 	
 public:
@@ -68,7 +48,7 @@ public:
 	
 	void initializeWidgets()
 	{
-		gw = new AirHockeyWidget(root(), this);
+		gw = new AirHockeyWidget(root());
 		gw->setSize(root()->size());
 		gw->setStyle(style());
 		gw->setDepth(0);
@@ -143,121 +123,133 @@ public:
 		gw->scorewidget->setLocation(size().maximum() * 0.5f - scorewidth/2 - 5, size().minimum() * 0.1f);
 		gw->scorewidget->hide();
    
-		p1 = new MultiWidgets::TextBox(root(), 0, MultiWidgets::TextBox::HCENTER);
+		p1 = new MultiWidgets::TextBox(root(), 0, MultiWidgets::TextBox::HCENTER | MultiWidgets::TextBox::VCENTER);
 		p1->setStyle(style());
-		p1->setText(std::string("Player 1"));
-		p1->setWidth(p1->totalTextAdvance() + 50);
+		p1->setWidth(500);
 		p1->setInputTransparent(true);
 		p1->setColor(0, 0, 0, 0);
 		p1->setRotation(Nimble::Math::HALF_PI);
-		p1->setLocation(size().maximum() * 0.1f, size().minimum() * 0.5f - p1->totalTextAdvance()/2 - 10);
+		p1->setLocation(size().maximum() * 0.05f + p1->height(), size().minimum() * 0.5f - p1->width()/2);
 		p1->hide();
 
-		p2 = new MultiWidgets::TextBox(root(), 0, MultiWidgets::TextBox::HCENTER);
+		p2 = new MultiWidgets::TextBox(root(), 0, MultiWidgets::TextBox::HCENTER | MultiWidgets::TextBox::VCENTER);
 		p2->setStyle(style());
 		p2->setText(std::string("Player 2"));
-		p2->setWidth(p2->totalTextAdvance() + 50);
+		p2->setWidth(500);
 		p2->setInputTransparent(true);
 		p2->setColor(0, 0, 0, 0);
 		p2->setRotation(-1 * Nimble::Math::HALF_PI);
-		//p2->setLocation(size().maximum() * 0.9f, size().minimum() * 0.5f - p2->totalTextAdvance()/2 - 10));
-		p2->setLocation(size().maximum() * 0.9f, size().minimum() - p2->totalTextAdvance());
+		p2->setLocation(size().maximum() * 0.95f - p2->height(), size().minimum() * 0.5f + p2->width()/2);
 		p2->hide();
 
 		HighscoreWidget * highscore = new HighscoreWidget(root());
 		highscore->setStyle(style());
-		highscore->setLocation(size().maximum() * 0.5f - highscore->width()/2, size().minimum() * 0.3f - highscore->height()/2);
+		highscore->setLocation(size().maximum() * 0.5f - highscore->width()/2, size().minimum() * 0.1f);
 		gw->highscore = highscore;
 		highscore->displayScores();
 		
+		MultiWidgets::TextBox * winnerLabel = new MultiWidgets::TextBox(root(), "Player 1 wins!", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		winnerLabel->setCSSType("WinnerLabel");
+		winnerLabel->setStyle(style());
+		winnerLabel->setWidth(winnerLabel->totalTextAdvance() + 300);
+		winnerLabel->setLocation(size().maximum() * 0.5f - winnerLabel->width()/2, size().minimum() * 0.8f);
+		winnerLabel->setInputTransparent(true);
+		winnerLabel->hide();
+		
 		// Start buttons
-		b0 = new MultiWidgets::TextBox(root(), "Start without feedback");
-		b1 = new MultiWidgets::TextBox(root(), "Start with feedback to both");
-		b2 = new MultiWidgets::TextBox(root(), "Start with feedback to P1");
-		b3 = new MultiWidgets::TextBox(root(), "Start with feedback to P2");
+		b0 = new MultiWidgets::TextBox(root(), "Start without feedback", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		b1 = new MultiWidgets::TextBox(root(), "Start with feedback to both", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		b2 = new MultiWidgets::TextBox(root(), "Start with feedback to P1", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		b3 = new MultiWidgets::TextBox(root(), "Start with feedback to P2", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		b4 = new MultiWidgets::TextBox(root(), "START", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
 		
 		b0->eventAddListener("interactionbegin", "start0", gw);
 		b0->setCSSType("StartButton");
 		b0->setStyle(style());
 		int buttonWidth = b0->size().maximum();
-		b0->setLocation(size().maximum() * 0.5f - 100 - 2*buttonWidth, size().minimum() - 200);
+		b0->setLocation(size().maximum() * 0.5f - 100 - 2*buttonWidth, size().minimum() - 220);
 		b0->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
 		b1->eventAddListener("interactionbegin", "start1", gw);
 		b1->setCSSType("StartButton");
 		b1->setStyle(style());
-		b1->setLocation(size().maximum() * 0.5f - 50 - buttonWidth, size().minimum() - 200);
+		b1->setLocation(size().maximum() * 0.5f - 50 - buttonWidth, size().minimum() - 220);
 		b1->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
 		b2->eventAddListener("interactionbegin", "start2", gw);
 		b2->setCSSType("StartButton");
 		b2->setStyle(style());
-		b2->setLocation(size().maximum() * 0.5f + 50, size().minimum() - 200);
+		b2->setLocation(size().maximum() * 0.5f + 50, size().minimum() - 220);
 		b2->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
 		b3->eventAddListener("interactionbegin", "start3", gw);
 		b3->setCSSType("StartButton");
 		b3->setStyle(style());
-		b3->setLocation(size().maximum() * 0.5f + 100 + buttonWidth, size().minimum() - 200);
+		b3->setLocation(size().maximum() * 0.5f + 100 + buttonWidth, size().minimum() - 220);
 		b3->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		kb1 = MultiWidgets::Keyboard::create(root(), "fi");
-		kb1->setStyle(style());
-		kb1->setLocation(300, 80);
-		kb1->setRotation(Nimble::Math::HALF_PI);
-		kb1->addOperator(new MultiWidgets::StayInsideParentOperator());
+		b4->eventAddListener("interactionbegin", "startGame", gw);
+		b4->setCSSType("StartButton");
+		b4->setStyle(style());
+		b4->setLocation(size().maximum() * 0.5f - b4->width()/2, size().minimum() - 220);
+		b4->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
+		b4->hide();
+
+		MultiWidgets::TextBox * text1Label = new MultiWidgets::TextBox(root(), "Enter player 1 name", MultiWidgets::TextEdit::HCENTER);
+		text1Label->setRotation(Nimble::Math::HALF_PI);
+		text1Label->setCSSType("NameInputLabel");
+		text1Label->setStyle(style());
+		text1Label->setWidth(text1Label->totalTextAdvance() + 50);
+		text1Label->setInputTransparent(true);
+		text1Label->setLocation(size().maximum() * 0.5f - 100, size().minimum() * 0.5f - text1Label->width()/2);
 		
-		kb2 = MultiWidgets::Keyboard::create(root(), "fi");
-		kb2->setStyle(style());
-		kb2->setLocation(size().maximum()-300, 80);
-		kb2->setRotation(-1 * Nimble::Math::HALF_PI);
-		kb2->addOperator(new MultiWidgets::StayInsideParentOperator());
+		MultiWidgets::TextBox * text2Label = new MultiWidgets::TextBox(root(), "Enter player 2 name", MultiWidgets::TextEdit::HCENTER);
+		text2Label->setRotation(-1 * Nimble::Math::HALF_PI);
+		text2Label->setCSSType("NameInputLabel");
+		text2Label->setStyle(style());
+		text2Label->setWidth(text1Label->totalTextAdvance() + 50);
+		text2Label->setInputTransparent(true);
+		text2Label->setLocation(size().maximum() * 0.5f + 100, size().minimum() * 0.5f + text1Label->width()/2);
 		
-		//MultiWidgets::TextBox * text1Label = new MultiWidgets::TextBox(
-		
-		text1 = new MultiWidgets::TextEdit(root(), "Enter player 1 name", MultiWidgets::TextEdit::HCENTER);
-		text1->setKeyboard(kb1);
-		text1->setColor(Radiant::Color(1.0f, 0.3f, 0.6f, 1.0f)); // Hot pink!
+		text1 = new MultiWidgets::TextEdit(root(), 0, MultiWidgets::TextEdit::HCENTER);
+		//text1->setKeyboardType("fi");
 		text1->Widget::setSize(240, 70);
 		text1->setRotation(Nimble::Math::HALF_PI);
-		text1->setLocation(500, size().minimum() * 0.5f - 120);
+		text1->setLocation(size().maximum() * 0.5f - 200, size().minimum() * 0.5f - 120);
 		text1->setCSSType("NameInput");
 		text1->setStyle(style());
 		text1->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		text2 = new MultiWidgets::TextEdit(root(), "Enter player 2 name", MultiWidgets::TextEdit::HCENTER);
-		text2->setKeyboard(kb2);
-		text2->setColor(Radiant::Color(1.0f, 0.3f, 0.6f, 1.0f)); // Hot pink!
+		text2 = new MultiWidgets::TextEdit(root(), 0, MultiWidgets::TextEdit::HCENTER);
+		//text2->setKeyboardType("fi");
 		text2->Widget::setSize(240, 70);
 		text2->setRotation(-1 * Nimble::Math::HALF_PI);
-		text2->setLocation(size().maximum() - 500, size().minimum() * 0.5f + 120);
+		text2->setLocation(size().maximum() * 0.5f + 200, size().minimum() * 0.5f + 120);
 		text2->setCSSType("NameInput");
 		text2->setStyle(style());
 		text2->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
 		text1->hideKeyboard();
 		text1->hide();
+		text1Label->hide();
 		text2->hideKeyboard();
 		text2->hide();
+		text2Label->hide();
 		
 		gw->b0 = b0;
 		gw->b1 = b1;
 		gw->b2 = b2;
 		gw->b3 = b3;
+		gw->b4 = b4;
 		gw->text1 = text1;
 		gw->text2 = text2;
-//		gw->kb1 = kb1;
-
+		gw->text1Label = text1Label;
+		gw->text2Label = text2Label;
+		gw->p1 = p1;
+		gw->p2 = p2;
+		gw->winnerLabel = winnerLabel;
+		
 		gw->initBluetooth();
-	}
-	
-	void initGame(int _feedbackMode){
-		b0->hide();
-		b1->hide();
-		b2->hide();
-		b3->hide();
-		text1->show();
-		kb1->show();
 	}
 	
 };

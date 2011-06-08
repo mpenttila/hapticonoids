@@ -27,16 +27,15 @@ HighscoreWidget::HighscoreWidget(MultiWidgets::Widget * parent) :
 	}
 	setInputTransparent(true);
 	setCSSType("Highscore");
-	setWidth(400);
-	setHeight(300);
-	setColor(0,0,0,0);
+	setWidth(500);
+	setHeight(390);
 	
 }
 
 HighscoreWidget::~HighscoreWidget(){
 }
 
-void HighscoreWidget::insertScore(string name, int seconds){
+void HighscoreWidget::insertScore(string name, long seconds){
 	Highscore hs = {name, seconds};
 	highscores.push_back(hs);
 	sort(highscores.begin(), highscores.end());
@@ -51,7 +50,7 @@ void HighscoreWidget::insertScore(string name, int seconds){
 	file.close();
 }
 
-string convertInt(int number)
+string convertInt(long number)
 {
    stringstream ss;
    ss << number;
@@ -60,17 +59,22 @@ string convertInt(int number)
 
 void HighscoreWidget::displayScores(){
 	if(!widgetsInitialized){
+		MultiWidgets::TextBox * title = new MultiWidgets::TextBox(this, "Fastest winners", MultiWidgets::TextBox::HCENTER);
+		title->setCSSType("HighscoreTitle");
+		title->setStyle(_style);
+		title->setInputTransparent(true);
+		title->setWidth(width() - 20);
+		title->setLocation(width() * 0.5f - title->width()/2, 5);
 		for(int i = 0; i < 10; i++){
 			MultiWidgets::TextBox * tb = new MultiWidgets::TextBox(this, 0, MultiWidgets::TextBox::HCENTER);
 			scoreWidgets.push_back(tb);
 			tb->setCSSType("ScoreTextBox");
 			tb->setStyle(_style);
 			tb->setInputTransparent(true);
-			int scorewidth = 300;
 			tb->setText(convertInt(i+1) + ". ");
-			tb->setWidth(scorewidth);
+			tb->setWidth(width() - 20);
 			tb->setHeight(30);
-			tb->setLocation(size().maximum() * 0.5f - scorewidth/2 - 5, 0 + 40 * i);
+			tb->setLocation(size().maximum() * 0.5f - tb->width()/2, 45 + 32 * i);
 			tb->show();
 		}
 		widgetsInitialized = true;
@@ -81,9 +85,12 @@ void HighscoreWidget::displayScores(){
 		MultiWidgets::TextBox * tb = scoreWidgets[count];
 		Highscore hc = *i;
 		tb->setText(convertInt(count+1) + ". " + hc.name + " - " + convertInt(hc.seconds) + " s");
-		tb->show();
         i++;
         count++;
+	}
+	for(int i = 0; i < 10; i++){
+		MultiWidgets::TextBox * tb = scoreWidgets[i];
+		tb->show();
 	}
 }
 

@@ -29,7 +29,6 @@
 #define feedbackName (const char*[4]){"haptic feedback off", "haptic feedback to both", "haptic feedback to P1", "haptic feedback to P2" }
 
 class ContactListener;
-class Hapticonoids;
 
 namespace {
   float BOX2D_SCALE = 50.0f;
@@ -41,11 +40,10 @@ class AirHockeyWidget : public MultiWidgets::ImageWidget {
   
 private:
 	int feedbackMode;
-	Hapticonoids * app;
   
 public:
 
-  AirHockeyWidget(MultiWidgets::Widget * parent = 0, Hapticonoids * _app = 0);
+  AirHockeyWidget(MultiWidgets::Widget * parent = 0);
   ~AirHockeyWidget();
 
   void update(float dt);
@@ -62,7 +60,7 @@ public:
   void input(MultiWidgets::GrabManager & gm, float dt);
   
   void initGame(int _feedbackMode);
-  void startGame(int _feedbackMode);
+  void startGame();
   void endGame(int player);
 
   int w, h;
@@ -105,10 +103,10 @@ public:
   Logger logger;
   HighscoreWidget * highscore;
   virtual void processMessage(const char * id, Radiant::BinaryData & data);
-  MultiWidgets::TextBox * p1, * p2;
-  MultiWidgets::TextBox * b0, * b1, * b2, * b3;
-  MultiWidgets::Keyboard * kb1, * kb2;
+  MultiWidgets::TextBox * p1, * p2, * b0, * b1, * b2, * b3, * b4, * text1Label, * text2Label, * winnerLabel;
   MultiWidgets::TextEdit * text1, * text2;
+  
+  std::string names[2];
 };
 
 

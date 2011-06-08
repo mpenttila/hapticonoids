@@ -29,34 +29,37 @@
 #define MALLET1_VERTICAL_FRACTION 0.15f
 #define MALLET2_VERTICAL_FRACTION 0.85f
 
-class Receiver : public virtual MultiWidgets::Widget
-{
-	public:
-    // Normal constructor
-    Receiver(MultiWidgets::Widget * parent)
-        : Widget(parent)
-    {
-		// Make this widget ignore all input
-		setInputFlags(0);
-    }
-    virtual ~Receiver() {}
-    
-    virtual void processMessage(const char * id, Radiant::BinaryData & data)
-    {
-		if(strcmp(id, "jump") == 0) {
-		}
-	}
-};
 
 class Hapticonoids : public MultiWidgets::SimpleSDLApplication
 {
 	typedef MultiWidgets::SimpleSDLApplication Parent;
+	
+	class Receiver : public virtual MultiWidgets::Widget
+	{
+		public:
+		// Normal constructor
+		Receiver(MultiWidgets::Widget * parent)
+			: Widget(parent)
+		{
+			// Make this widget ignore all input
+			setInputFlags(0);
+		}
+		virtual ~Receiver() {}
+		
+		virtual void processMessage(const char * id, Radiant::BinaryData & data)
+		{
+			if(strcmp(id, "jump") == 0) {
+			}
+		}
+	};
 
 private:
 	AirHockeyWidget * gw;
 	MultiWidgets::ImageWidget * mallet1, * mallet2, * puck;
 	MultiWidgets::TextBox * p1, * p2;
 	MultiWidgets::TextBox * b0, * b1, * b2, * b3;
+	MultiWidgets::Keyboard * kb1, * kb2;
+	MultiWidgets::TextEdit * text1, * text2;
 	
 public:
 	Hapticonoids() : Parent()
@@ -65,7 +68,7 @@ public:
 	
 	void initializeWidgets()
 	{
-		gw = new AirHockeyWidget(root());
+		gw = new AirHockeyWidget(root(), this);
 		gw->setSize(root()->size());
 		gw->setStyle(style());
 		gw->setDepth(0);
@@ -163,8 +166,9 @@ public:
 
 		HighscoreWidget * highscore = new HighscoreWidget(root());
 		highscore->setStyle(style());
-		highscore->setLocation(size().maximum() * 0.5f, size().minimum() * 0.5f);
+		highscore->setLocation(size().maximum() * 0.5f - highscore->width()/2, size().minimum() * 0.3f - highscore->height()/2);
 		gw->highscore = highscore;
+		highscore->displayScores();
 		
 		// Start buttons
 		b0 = new MultiWidgets::TextBox(root(), "Start without feedback");
@@ -197,10 +201,63 @@ public:
 		b3->setLocation(size().maximum() * 0.5f + 100 + buttonWidth, size().minimum() - 200);
 		b3->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		b0->setStyle(style());
-		b0->setCSSType("StartButton");
+		kb1 = MultiWidgets::Keyboard::create(root(), "fi");
+		kb1->setStyle(style());
+		kb1->setLocation(300, 80);
+		kb1->setRotation(Nimble::Math::HALF_PI);
+		kb1->addOperator(new MultiWidgets::StayInsideParentOperator());
+		
+		kb2 = MultiWidgets::Keyboard::create(root(), "fi");
+		kb2->setStyle(style());
+		kb2->setLocation(size().maximum()-300, 80);
+		kb2->setRotation(-1 * Nimble::Math::HALF_PI);
+		kb2->addOperator(new MultiWidgets::StayInsideParentOperator());
+		
+		//MultiWidgets::TextBox * text1Label = new MultiWidgets::TextBox(
+		
+		text1 = new MultiWidgets::TextEdit(root(), "Enter player 1 name", MultiWidgets::TextEdit::HCENTER);
+		text1->setKeyboard(kb1);
+		text1->setColor(Radiant::Color(1.0f, 0.3f, 0.6f, 1.0f)); // Hot pink!
+		text1->Widget::setSize(240, 70);
+		text1->setRotation(Nimble::Math::HALF_PI);
+		text1->setLocation(500, size().minimum() * 0.5f - 120);
+		text1->setCSSType("NameInput");
+		text1->setStyle(style());
+		text1->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
+		
+		text2 = new MultiWidgets::TextEdit(root(), "Enter player 2 name", MultiWidgets::TextEdit::HCENTER);
+		text2->setKeyboard(kb2);
+		text2->setColor(Radiant::Color(1.0f, 0.3f, 0.6f, 1.0f)); // Hot pink!
+		text2->Widget::setSize(240, 70);
+		text2->setRotation(-1 * Nimble::Math::HALF_PI);
+		text2->setLocation(size().maximum() - 500, size().minimum() * 0.5f + 120);
+		text2->setCSSType("NameInput");
+		text2->setStyle(style());
+		text2->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
+		
+		text1->hideKeyboard();
+		text1->hide();
+		text2->hideKeyboard();
+		text2->hide();
+		
+		gw->b0 = b0;
+		gw->b1 = b1;
+		gw->b2 = b2;
+		gw->b3 = b3;
+		gw->text1 = text1;
+		gw->text2 = text2;
+//		gw->kb1 = kb1;
 
 		gw->initBluetooth();
+	}
+	
+	void initGame(int _feedbackMode){
+		b0->hide();
+		b1->hide();
+		b2->hide();
+		b3->hide();
+		text1->show();
+		kb1->show();
 	}
 	
 };

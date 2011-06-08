@@ -3,9 +3,12 @@
 
 #include <MultiWidgets/ImageWidget.hpp>
 #include <MultiWidgets/TextBox.hpp>
+#include <MultiWidgets/SimpleSDLApplication.hpp>
 #include <Radiant/Grid.hpp>
 #include <Radiant/BinaryData.hpp>
 #include <Luminous/Utils.hpp>
+#include <MultiWidgets/Keyboard.hpp>
+#include <MultiWidgets/TextEdit.hpp>
 #include <Box2D/Box2D.h>
 
 #include <map>
@@ -26,6 +29,7 @@
 #define feedbackName (const char*[4]){"haptic feedback off", "haptic feedback to both", "haptic feedback to P1", "haptic feedback to P2" }
 
 class ContactListener;
+class Hapticonoids;
 
 namespace {
   float BOX2D_SCALE = 50.0f;
@@ -37,10 +41,11 @@ class AirHockeyWidget : public MultiWidgets::ImageWidget {
   
 private:
 	int feedbackMode;
+	Hapticonoids * app;
   
 public:
 
-  AirHockeyWidget(MultiWidgets::Widget * parent = 0);
+  AirHockeyWidget(MultiWidgets::Widget * parent = 0, Hapticonoids * _app = 0);
   ~AirHockeyWidget();
 
   void update(float dt);
@@ -56,7 +61,7 @@ public:
 
   void input(MultiWidgets::GrabManager & gm, float dt);
   
-  void initGame();
+  void initGame(int _feedbackMode);
   void startGame(int _feedbackMode);
   void endGame(int player);
 
@@ -100,7 +105,10 @@ public:
   Logger logger;
   HighscoreWidget * highscore;
   virtual void processMessage(const char * id, Radiant::BinaryData & data);
-  
+  MultiWidgets::TextBox * p1, * p2;
+  MultiWidgets::TextBox * b0, * b1, * b2, * b3;
+  MultiWidgets::Keyboard * kb1, * kb2;
+  MultiWidgets::TextEdit * text1, * text2;
 };
 
 

@@ -2,13 +2,14 @@
 #include <Luminous/FramebufferObject.hpp>
 #include <Nimble/Random.hpp>
 #include <Box2D/Box2D.h>
+#include <MultiWidgets/StayInsideParentOperator.hpp>
 
 #include "airhockeywidget.hpp"
 
 #define MALLET1_VERTICAL_FRACTION 0.15f
 #define MALLET2_VERTICAL_FRACTION 0.85f
 
-AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
+AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent, Hapticonoids * _app) :
 	MultiWidgets::ImageWidget(parent),
 	m_world(b2Vec2(0,0), true),
 	leftScore(0),
@@ -21,7 +22,8 @@ AirHockeyWidget::AirHockeyWidget(MultiWidgets::Widget * parent) :
 	puck_hit_sound_type(this, "puck-hit-sound-type", 0),
 	victory_sound_type(this, "victory-sound-type", 0),
 	win_limit(this, "win-limit", 0),
-	use_bluetooth(this, "bluetooth", 0)
+	use_bluetooth(this, "bluetooth", 0),
+	app(_app)
 	{
 		setCSSType("AirHockeyWidget");
 		w = h = 0;
@@ -62,6 +64,18 @@ void AirHockeyWidget::initBluetooth(){
 	}
 }
 
+void AirHockeyWidget::initGame(int _feedbackMode){
+	b0->hide();
+	b1->hide();
+	b2->hide();
+	b3->hide();
+	highscore->hideScores();
+	text1->show();
+	text1->createKeyboard();
+	text2->show();
+	text2->createKeyboard();
+}
+
 void AirHockeyWidget::startGame(int _feedbackMode){
 	feedbackMode = _feedbackMode;
 	logger.startGame(feedbackName[feedbackMode], "Arska", "Jorma");
@@ -82,7 +96,16 @@ void AirHockeyWidget::endGame(int player){
 void AirHockeyWidget::processMessage(const char * id, Radiant::BinaryData & data)
 {
 	if(strcmp(id, "start0") == 0) {
-		std::cout << "start 0 pressed" << endl;
+		initGame(0);
+	}
+	else if(strcmp(id, "start1") == 0) {
+		initGame(1);
+	}
+	else if(strcmp(id, "start2") == 0) {
+		initGame(2);
+	}
+	else if(strcmp(id, "start3") == 0) {
+		initGame(3);
 	}
 	else {
 		Widget::processMessage(id, data);

@@ -39,3 +39,8 @@ StartButton {
 	width: 100px;
 	foreground: #000000FF;
 }
+
+NameInput {
+	font-name: "DroidSans-Bold.ttf";	
+	font-size: 18px;
+}

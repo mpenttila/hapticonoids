@@ -119,7 +119,7 @@ void AirHockeyWidget::startGame(){
 	names[1] = p2String;
 	p2->setText(p2String);
 	p2->show();
-
+	resetGameWidgets(true);
 	mallet1->show();
 	mallet2->show();
 	puck->show();
@@ -305,6 +305,27 @@ void AirHockeyWidget::updateBodiesToWidgets() {
   }
 }
 
+void AirHockeyWidget::resetGameWidgets(bool ignorePosition){
+	// Restore all lost widgets to table
+	for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
+		Widget * w = (Widget*)it->first;
+		Nimble::Vector2 pos = w->mapToParent(0.5f * w->size());
+		if(ignorePosition || (pos.x <= 0) || (pos.x >= size().maximum()))
+		{
+			if((Widget*)it->first == puck){	
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
+			}
+			else if((Widget*)it->first == mallet1){
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET1_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
+			}
+			else if((Widget*)it->first == mallet2){
+				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET2_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
+			}
+			it->second->SetLinearVelocity(b2Vec2(0,0));
+		}
+	}
+}
+
 void AirHockeyWidget::checkScoring(){
 	Nimble::Vector2 center = puck->mapToParent(0.5f * puck->size());
 	bool scored = false;
@@ -336,24 +357,7 @@ void AirHockeyWidget::checkScoring(){
 			scorewidget->setText(buffer);
 		}
 	}
-	// Restore all lost widgets to table
-	for (std::map<void*, b2Body*>::iterator it = m_bodies.begin(); it != m_bodies.end(); ++it) {
-		Widget * w = (Widget*)it->first;
-		Nimble::Vector2 pos = w->mapToParent(0.5f * w->size());
-		if((pos.x <= 0) || (pos.x >= size().maximum()))
-		{
-			if((Widget*)it->first == puck){	
-				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
-			}
-			else if((Widget*)it->first == mallet1){
-				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET1_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
-			}
-			else if((Widget*)it->first == mallet2){
-				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET2_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
-			}
-			it->second->SetLinearVelocity(b2Vec2(0,0));
-		}
-	}
+	resetGameWidgets();
 }
 
 void AirHockeyWidget::update(float dt)

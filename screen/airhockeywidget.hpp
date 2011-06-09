@@ -56,6 +56,7 @@ public:
   void sendWallHit(int player);
   void sendScoringSoundAndVibration(int player);
   void sendVictorySound(int player);
+  void resetGameWidgets(bool ignorePosition = false);
 
   void input(MultiWidgets::GrabManager & gm, float dt);
   

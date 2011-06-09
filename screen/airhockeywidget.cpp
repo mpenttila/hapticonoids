@@ -379,26 +379,49 @@ void AirHockeyWidget::input(MultiWidgets::GrabManager & gm, float dt)
 
 	ensureWidgetsHaveBodies();
 	ensureGroundInitialized();
-
+	
+	// Added these to inspect finger history from a couple of samples ago
+/*	static MultiTouch::Sample prevSample1;
+	static MultiTouch::Sample prevSample2;
+	static MultiTouch::Sample prevSample3;
+	
+	if(prevSample1 == NULL){
+		prevSample1 = gm.prevSample();
+		prevSample2 = gm.prevSample();
+		prevSample3 = gm.prevSample();
+	}
+	else{
+		prevSample3 = prevSample2;
+		prevSample2 = prevSample1;
+		prevSample1 = gm.prevSample();
+	}
+*/	
 	MultiTouch::Sample s1 = gm.prevSample();
 	MultiTouch::Sample s2 = gm.sample();
 	std::vector<long> lost;
+	static std::set<long> potentiallyLost;
 
 	for (std::set<long>::iterator it = m_currentFingerIds.begin(); it != m_currentFingerIds.end(); ) {
-		if (s2.findFinger(*it).isNull()) {
+		if (s2.findFinger(*it).isNull() && potentiallyLost.count(*it) > 0){
+			// Was not in prevprev sample either
 			lost.push_back(*it);
-			m_currentFingerIds.erase(it++);
-		} else {
-			it++;
+			m_currentFingerIds.erase(*it);
+			potentiallyLost.erase(*it);
+		}	
+		else if (s2.findFinger(*it).isNull()) {
+			//lost.push_back(*it);
+			//m_currentFingerIds.erase(it++);
+			potentiallyLost.insert(*it);
 		}
+		it++;
 	}
   
 	for (unsigned int i=0; i < lost.size(); ++i) {
-	MultiTouch::Finger f = s1.findFinger(lost[i]);
-	if (f.isNull()) continue;
-	
+		MultiTouch::Finger f = s1.findFinger(lost[i]);
+		if (f.isNull()) continue;
+		
 		// Destroy joints from lost fingers
-	
+
 		if(m_fingerjoints.count(f.id()) > 0){
 			b2MouseJoint * joint = m_fingerjoints[f.id()];
 			m_world.DestroyJoint(joint);
@@ -437,6 +460,8 @@ void AirHockeyWidget::input(MultiWidgets::GrabManager & gm, float dt)
 						md.bodyB = m_bodies[*it];
 						md.target = newLocation;
 						md.collideConnected = true;
+						md.dampingRatio = 0;
+						md.frequencyHz = 60;
 						md.maxForce = 5000.0f * m_bodies[*it]->GetMass();
 						m_fingerjoints[f.id()] = (b2MouseJoint *)m_world.CreateJoint(&md);
 						m_bodies[*it]->SetAwake(true);

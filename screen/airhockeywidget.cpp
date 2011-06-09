@@ -399,21 +399,15 @@ void AirHockeyWidget::input(MultiWidgets::GrabManager & gm, float dt)
 	MultiTouch::Sample s1 = gm.prevSample();
 	MultiTouch::Sample s2 = gm.sample();
 	std::vector<long> lost;
-	static std::set<long> potentiallyLost;
 
 	for (std::set<long>::iterator it = m_currentFingerIds.begin(); it != m_currentFingerIds.end(); ) {
-		if (s2.findFinger(*it).isNull() && potentiallyLost.count(*it) > 0){
-			// Was not in prevprev sample either
+		if (s2.findFinger(*it).isNull()){
 			lost.push_back(*it);
-			m_currentFingerIds.erase(*it);
-			potentiallyLost.erase(*it);
-		}	
-		else if (s2.findFinger(*it).isNull()) {
-			//lost.push_back(*it);
-			//m_currentFingerIds.erase(it++);
-			potentiallyLost.insert(*it);
+			m_currentFingerIds.erase(it++);
 		}
-		it++;
+		else{
+			it++;
+		}
 	}
   
 	for (unsigned int i=0; i < lost.size(); ++i) {

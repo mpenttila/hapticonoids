@@ -64,7 +64,7 @@ void HighscoreWidget::displayScores(){
 		title->setStyle(_style);
 		title->setInputTransparent(true);
 		title->setWidth(width() - 20);
-		title->setLocation(width() * 0.5f - title->width()/2, 5);
+		title->setLocation(width() * 0.5f - title->width()/2, 10);
 		for(int i = 0; i < 10; i++){
 			MultiWidgets::TextBox * tb = new MultiWidgets::TextBox(this, 0, MultiWidgets::TextBox::HCENTER);
 			scoreWidgets.push_back(tb);
@@ -74,7 +74,7 @@ void HighscoreWidget::displayScores(){
 			tb->setText(convertInt(i+1) + ". ");
 			tb->setWidth(width() - 20);
 			tb->setHeight(30);
-			tb->setLocation(size().maximum() * 0.5f - tb->width()/2, 45 + 32 * i);
+			tb->setLocation(size().maximum() * 0.5f - tb->width()/2, 50 + 32 * i);
 			tb->show();
 		}
 		widgetsInitialized = true;

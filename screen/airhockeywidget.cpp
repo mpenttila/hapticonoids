@@ -3,6 +3,8 @@
 #include <Nimble/Random.hpp>
 #include <Box2D/Box2D.h>
 #include <MultiWidgets/StayInsideParentOperator.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 #include "airhockeywidget.hpp"
 
@@ -67,6 +69,7 @@ void AirHockeyWidget::initBluetooth(){
 
 void AirHockeyWidget::initGame(int _feedbackMode){
 	feedbackMode = _feedbackMode;
+	winnerLabel->hide();
 	b0->hide();
 	b1->hide();
 	b2->hide();
@@ -80,6 +83,8 @@ void AirHockeyWidget::initGame(int _feedbackMode){
 	text2->show();
 	text2->createKeyboard();
 	b4->show();
+	p1->hide();
+	p2->hide();
 }
 
 void AirHockeyWidget::startGame(){
@@ -99,16 +104,22 @@ void AirHockeyWidget::startGame(){
 	if(p2Name.length() < 1){
 		p2Name = (L"Player 2");
 	}
-	p1->setText(p1Name);
 	std::string p1String(p1Name.length(), ' '); 
 	copy(p1Name.begin(), p1Name.end(), p1String.begin());
+	p1String = boost::algorithm::trim_copy(p1String);
+	boost::algorithm::erase_all(p1String, "\n");
 	names[0] = p1String;
+	p1->setText(p1String);
 	p1->show();
-	p2->setText(p2Name);
+
 	std::string p2String(p2Name.length(), ' ');
 	copy(p2Name.begin(), p2Name.end(), p2String.begin());
+	p2String = boost::algorithm::trim_copy(p2String);
+	boost::algorithm::erase_all(p2String, "\n");
 	names[1] = p2String;
+	p2->setText(p2String);
 	p2->show();
+
 	mallet1->show();
 	mallet2->show();
 	puck->show();

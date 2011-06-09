@@ -27,6 +27,7 @@ Cornerstone runtime (http://cornerstone.multitouch.fi/)
 Box2D physics library
 BlueZ Bluetooth library
 POSIX threads (pthreads)
+Boost libraries
 
 Requirements for compiling:
 

@@ -152,7 +152,7 @@ public:
 		winnerLabel->setCSSType("WinnerLabel");
 		winnerLabel->setStyle(style());
 		winnerLabel->setWidth(winnerLabel->totalTextAdvance() + 300);
-		winnerLabel->setLocation(size().maximum() * 0.5f - winnerLabel->width()/2, size().minimum() * 0.8f);
+		winnerLabel->setLocation(size().maximum() * 0.5f - winnerLabel->width()/2, size().minimum() * 0.6f);
 		winnerLabel->setInputTransparent(true);
 		winnerLabel->hide();
 		
@@ -201,7 +201,7 @@ public:
 		text1Label->setStyle(style());
 		text1Label->setWidth(text1Label->totalTextAdvance() + 50);
 		text1Label->setInputTransparent(true);
-		text1Label->setLocation(size().maximum() * 0.5f - 100, size().minimum() * 0.5f - text1Label->width()/2);
+		text1Label->setLocation(size().maximum() * 0.35f, size().minimum() * 0.5f - text1Label->width()/2);
 		
 		MultiWidgets::TextBox * text2Label = new MultiWidgets::TextBox(root(), "Enter player 2 name", MultiWidgets::TextEdit::HCENTER);
 		text2Label->setRotation(-1 * Nimble::Math::HALF_PI);
@@ -209,13 +209,13 @@ public:
 		text2Label->setStyle(style());
 		text2Label->setWidth(text1Label->totalTextAdvance() + 50);
 		text2Label->setInputTransparent(true);
-		text2Label->setLocation(size().maximum() * 0.5f + 100, size().minimum() * 0.5f + text1Label->width()/2);
+		text2Label->setLocation(size().maximum() * 0.65f, size().minimum() * 0.5f + text1Label->width()/2);
 		
 		text1 = new MultiWidgets::TextEdit(root(), 0, MultiWidgets::TextEdit::HCENTER);
 		//text1->setKeyboardType("fi");
 		text1->Widget::setSize(240, 70);
 		text1->setRotation(Nimble::Math::HALF_PI);
-		text1->setLocation(size().maximum() * 0.5f - 200, size().minimum() * 0.5f - 120);
+		text1->setLocation(size().maximum() * 0.3f, size().minimum() * 0.5f - 120);
 		text1->setCSSType("NameInput");
 		text1->setStyle(style());
 		text1->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
@@ -224,7 +224,7 @@ public:
 		//text2->setKeyboardType("fi");
 		text2->Widget::setSize(240, 70);
 		text2->setRotation(-1 * Nimble::Math::HALF_PI);
-		text2->setLocation(size().maximum() * 0.5f + 200, size().minimum() * 0.5f + 120);
+		text2->setLocation(size().maximum() * 0.7f, size().minimum() * 0.5f + 120);
 		text2->setCSSType("NameInput");
 		text2->setStyle(style());
 		text2->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);

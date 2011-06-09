@@ -22,7 +22,7 @@ TextBox {
 }
 
 Highscore{
-	color: #FFFFFF80;
+	color: #FFFFFF70;
 }
 
 HighscoreTitle{
@@ -70,6 +70,6 @@ NameInputLabel {
 WinnerLabel{
 	font-name: "DroidSans-Bold.ttf";	
 	font-size: 64px;
-	foreground: #FF0000;
+	foreground: #440092;
 	color: #FFFFFF00;
 }

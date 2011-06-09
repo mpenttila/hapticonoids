@@ -162,7 +162,7 @@ void AirHockeyWidget::processMessage(const char * id, Radiant::BinaryData & data
 }
 
 void AirHockeyWidget::sendPuckHit(int player){
-	if(use_bluetooth == 1 && feedbackMode > 0){
+	if(use_bluetooth == 1 && (feedbackMode == player || feedbackMode == FEEDBACK_BOTH)){
 		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 1, puck_hit_sound_type);
 		hf.sendMessageToPlayer(player, 0, mallet_puck_vibration_type);
@@ -170,7 +170,7 @@ void AirHockeyWidget::sendPuckHit(int player){
 }
 
 void AirHockeyWidget::sendWallHit(int player){
-	if(use_bluetooth == 1){
+	if(use_bluetooth == 1 && (feedbackMode == player || feedbackMode == FEEDBACK_BOTH)){
 		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 1, wall_hit_sound_type);
 		hf.sendMessageToPlayer(player, 0, mallet_wall_vibration_type);
@@ -178,7 +178,7 @@ void AirHockeyWidget::sendWallHit(int player){
 }
 
 void AirHockeyWidget::sendScoringSoundAndVibration(int player){
-	if(use_bluetooth == 1){
+	if(use_bluetooth == 1 && (feedbackMode == player || feedbackMode == FEEDBACK_BOTH)){
 		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 1, scoring_sound_type);
 		hf.sendMessageToPlayer(player, 0, scoring_vibration_type);
@@ -186,7 +186,7 @@ void AirHockeyWidget::sendScoringSoundAndVibration(int player){
 }
 
 void AirHockeyWidget::sendVictorySound(int player){
-	if(use_bluetooth == 1){
+	if(use_bluetooth == 1 && (feedbackMode == player || feedbackMode == FEEDBACK_BOTH)){
 		// int player_number, int message_type, int message_id
 		hf.sendMessageToPlayer(player, 1, victory_sound_type);
 	}

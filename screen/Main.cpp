@@ -170,19 +170,19 @@ public:
 		b0->setLocation(size().maximum() * 0.5f - 100 - 2*buttonWidth, size().minimum() - 220);
 		b0->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		b1->eventAddListener("interactionbegin", "start1", gw);
+		b1->eventAddListener("interactionbegin", "start3", gw);
 		b1->setCSSType("StartButton");
 		b1->setStyle(style());
 		b1->setLocation(size().maximum() * 0.5f - 50 - buttonWidth, size().minimum() - 220);
 		b1->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		b2->eventAddListener("interactionbegin", "start2", gw);
+		b2->eventAddListener("interactionbegin", "start1", gw);
 		b2->setCSSType("StartButton");
 		b2->setStyle(style());
 		b2->setLocation(size().maximum() * 0.5f + 50, size().minimum() - 220);
 		b2->setInputFlags(MultiWidgets::Widget::INPUT_USE_TAPS);
 		
-		b3->eventAddListener("interactionbegin", "start3", gw);
+		b3->eventAddListener("interactionbegin", "start2", gw);
 		b3->setCSSType("StartButton");
 		b3->setStyle(style());
 		b3->setLocation(size().maximum() * 0.5f + 100 + buttonWidth, size().minimum() - 220);

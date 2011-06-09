@@ -23,10 +23,10 @@
 #define PUCK 3
 
 #define FEEDBACK_OFF 0
-#define FEEDBACK_BOTH 1
-#define FEEDBACK_P1 2
-#define FEEDBACK_P2 3
-#define feedbackName (const char*[4]){"haptic feedback off", "haptic feedback to both", "haptic feedback to P1", "haptic feedback to P2" }
+#define FEEDBACK_BOTH 3
+#define FEEDBACK_P1 1
+#define FEEDBACK_P2 2
+#define feedbackName (const char*[4]){"haptic feedback off", "haptic feedback to P1", "haptic feedback to P2", "haptic feedback to both" }
 
 class ContactListener;
 

@@ -79,9 +79,11 @@ void AirHockeyWidget::initGame(int _feedbackMode){
 	text1Label->show();
 	text1->show();
 	text1->createKeyboard();
+	text1->enableLockKeyboardToSelf();
 	text2Label->show();
 	text2->show();
 	text2->createKeyboard();
+	text2->enableLockKeyboardToSelf();
 	b4->show();
 	p1->hide();
 	p2->hide();
@@ -454,8 +456,8 @@ void AirHockeyWidget::input(MultiWidgets::GrabManager & gm, float dt)
 						md.bodyB = m_bodies[*it];
 						md.target = newLocation;
 						md.collideConnected = true;
-						md.dampingRatio = 0;
-						md.frequencyHz = 60;
+						//md.dampingRatio = 0;
+						//md.frequencyHz = 60;
 						md.maxForce = 5000.0f * m_bodies[*it]->GetMass();
 						m_fingerjoints[f.id()] = (b2MouseJoint *)m_world.CreateJoint(&md);
 						m_bodies[*it]->SetAwake(true);

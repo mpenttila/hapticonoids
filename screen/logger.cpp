@@ -17,39 +17,46 @@ Logger::~Logger(){
 	logstream.close();
 }
 
+wstring strToWstr(const string & str ){
+	wstring temp(str.length(), L' ');
+	copy(str.begin(), str.end(), temp.begin());
+	return temp;
+}
+
 void Logger::startGame(string mode, wstring _player1Name, wstring _player2Name){
-	wstring wideMode(mode.length(), L' ');
-	copy(mode.begin(), mode.end(), wideMode.begin());
+	gameNumber++;
+	wstring wideMode = strToWstr(mode);
 	player1Name = _player1Name;
 	player2Name = _player2Name;
 	time(&startTime);
 	localStartTime = localtime(&startTime);
-	gameNumber++;
-	logstream << asctime(localStartTime) << "ROUND " << gameNumber << ": New game started in mode: " << wideMode << endl;
+	ptime t(microsec_clock::local_time());
+	startMicroTime = t;
+	wstring timeString = strToWstr(to_simple_string(startMicroTime));
+	logstream << timeString << endl;
+	logstream << "ROUND " << gameNumber << ": New game started in mode: " << wideMode << endl;
 	logstream << "ROUND " << gameNumber << ": Player 1: " << _player1Name << ", Player 2: " << _player2Name << endl;
 }
 
 void Logger::logGoal(int player){
-	time_t goalTime;
-	time(&goalTime);
+	ptime goalTime(microsec_clock::local_time());
 	wstring playerName;
 	if(player == 1) playerName = player1Name;
 	else if(player == 2) playerName = player2Name;
 	else return;
-	time_t difference = goalTime - startTime;
-	logstream << "ROUND " << gameNumber << ": [" << difference << " s]: Player " << player << " (" << playerName << ") scored a goal" << endl;
+	time_duration difference = goalTime - startMicroTime;
+	logstream << "ROUND " << gameNumber << ": [" << difference.total_milliseconds() << " ms]: Player " << player << " (" << playerName << ") scored a goal" << endl;
 }
 
 // Returns seconds passed for highscores
 long Logger::endGame(int winner, int player1Goals, int player2Goals){
-	time_t endTime;
-	time(&endTime);
+	ptime endTime(microsec_clock::local_time());
 	wstring playerName;
 	if(winner == 1) playerName = player1Name;
 	else if(winner == 2) playerName = player2Name;
-	time_t difference = endTime - startTime;
-	logstream << "ROUND " << gameNumber << ": [" << difference << " s]: Winner is player " << winner << " (" << playerName << ")" << endl;
+	time_duration difference = endTime - startMicroTime;
+	logstream << "ROUND " << gameNumber << ": [" << difference.total_milliseconds() << " ms]: Winner is player " << winner << " (" << playerName << ")" << endl;
 	logstream << "ROUND " << gameNumber << ": Final score: Player 1 (" << player1Name << "): " << player1Goals << " - " << "Player 2 (" << player2Name << "): " << player2Goals << endl;
 	logstream << endl;
-	return (long)difference;
+	return difference.total_milliseconds();
 }

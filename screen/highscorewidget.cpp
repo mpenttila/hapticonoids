@@ -18,7 +18,7 @@ HighscoreWidget::HighscoreWidget(MultiWidgets::Widget * parent) :
 			}
 			size_t found = line.find_last_of(":");
 			string name(line.substr(0, found));
-			int score = atoi(line.substr(found + 1).c_str());
+			long score = atol(line.substr(found + 1).c_str());
 			Highscore hs = {name, score};
 			highscores.push_back(hs);
 			sort(highscores.begin(), highscores.end());
@@ -84,7 +84,7 @@ void HighscoreWidget::displayScores(){
 	while (i < highscores.end() && count < 10){
 		MultiWidgets::TextBox * tb = scoreWidgets[count];
 		Highscore hc = *i;
-		tb->setText(convertInt(count+1) + ". " + hc.name + " - " + convertInt(hc.seconds) + " s");
+		tb->setText(convertInt(count+1) + ". " + hc.name + " - " + convertInt(hc.seconds) + " ms");
         i++;
         count++;
 	}

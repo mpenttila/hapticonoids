@@ -1,4 +1,4 @@
-SOURCES += Main.cpp airhockeywidget.cpp contactlistener.cpp hapticfeedback.cpp logger.cpp highscorewidget.cpp
+SOURCES += Main.cpp airhockeywidget.cpp contactlistener.cpp hapticfeedback.cpp logger.cpp highscorewidget.cpp greg_month.cpp date_generators.cpp gregorian_types.cpp greg_weekday.cpp
 
 CONFIG += release
 CONFIG -= qt

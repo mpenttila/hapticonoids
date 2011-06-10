@@ -148,7 +148,7 @@ public:
 		gw->highscore = highscore;
 		highscore->displayScores();
 		
-		MultiWidgets::TextBox * winnerLabel = new MultiWidgets::TextBox(root(), "Player 1 wins!", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
+		MultiWidgets::TextBox * winnerLabel = new MultiWidgets::TextBox(root(), "PlayerPlayerPlayer 1 wins 2-0!", MultiWidgets::TextBox::VCENTER | MultiWidgets::TextBox::HCENTER);
 		winnerLabel->setCSSType("WinnerLabel");
 		winnerLabel->setStyle(style());
 		winnerLabel->setWidth(winnerLabel->totalTextAdvance() + 300);

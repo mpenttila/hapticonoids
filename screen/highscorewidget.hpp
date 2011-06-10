@@ -2,6 +2,7 @@
 #define HIGHSCOREWIDGET_H
 
 #include <MultiWidgets/TextBox.hpp>
+#include <MultiWidgets/ImageWidget.hpp>
 #include <Fluffy/StyleSheet.hpp>
 #include <vector>
 #include <string>
@@ -17,7 +18,7 @@ struct Highscore {
     }
 };
 
-class HighscoreWidget : public MultiWidgets::Widget {
+class HighscoreWidget : public MultiWidgets::ImageWidget {
 	
 	private:
 		std::vector<Highscore> highscores;

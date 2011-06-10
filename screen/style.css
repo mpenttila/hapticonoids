@@ -22,11 +22,12 @@ TextBox {
 }
 
 Highscore{
-	color: #FFFFFF70;
+	/* color: #FFFFFF70; */
+	color: #00000000;
 }
 
 HighscoreTitle{
-	font-name: "DroidSans-Bold.ttf";
+	font-name: "Gamegirl-Classic.ttf";
 	font-size: 30px;
 	color: #FFFFFF00;
 	foreground: #000000FF;
@@ -35,7 +36,7 @@ HighscoreTitle{
 }
 
 ScoreTextBox {
-	font-name: "DroidSans-Bold.ttf";
+	font-name: "Gamegirl-Classic.ttf";
 	font-size: 26px;
 	color: #FFFFFF00;
 	foreground: #000000FF;

@@ -234,7 +234,7 @@ void AirHockeyWidget::ensureWidgetsHaveBodies() {
 		fixtureDef.friction = 0.9f;
 		fixtureDef.restitution = 1.0f;
 		fixtureDef.density = 10.0f;
-		body->SetLinearDamping(0.4f);
+		body->SetLinearDamping(0.5f);
 	  }
 	  else{
 		fixtureDef.friction = 1.0f;
@@ -314,15 +314,20 @@ void AirHockeyWidget::resetGameWidgets(bool ignorePosition){
 		Nimble::Vector2 pos = w->mapToParent(0.5f * w->size());
 		if(ignorePosition || (pos.x <= 0) || (pos.x >= size().maximum()))
 		{
-			if((Widget*)it->first == puck){	
+			if(w == puck){	
 				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, size().minimum() * 0.5f)), 0);
 			}
-			else if((Widget*)it->first == mallet1){
+			else if(w == mallet1){
 				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET1_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
 			}
-			else if((Widget*)it->first == mallet2){
+			else if(w == mallet2){
 				it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * MALLET2_VERTICAL_FRACTION, size().minimum() * 0.5f)), 0);
 			}
+			it->second->SetLinearVelocity(b2Vec2(0,0));
+		}
+		// Prevent going to other players area
+		else if((w == mallet1 && pos.x >= size().maximum()*0.5f) || (w == mallet2 && pos.x <= size().maximum()*0.5f)){
+			it->second->SetTransform(toBox2D(Nimble::Vector2(size().maximum() * 0.5f, pos.y)), 0);
 			it->second->SetLinearVelocity(b2Vec2(0,0));
 		}
 	}

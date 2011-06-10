@@ -71,7 +71,7 @@ public:
 		/* Check that the file is loadable. The actual file loading is
 		  done in a background thread, so that the loading does not stall
 		  the application. */
-		if(mallet1->load(std::string("mallet.png")) && mallet2->load(std::string("mallet.png"))) {
+		if(mallet1->load(std::string("mallet_p1.png")) && mallet2->load(std::string("mallet_p2.png"))) {
 
 			 // Resize the Widget:
 			 mallet1->resizeToFit(Nimble::Vector2(malletsize, malletsize));
@@ -88,12 +88,12 @@ public:
 			 gw->mallet2 = mallet2;
 		}
 		else {
-			Radiant::error("Could not load image file mallet.png");
+			Radiant::error("Could not load image files for mallets.");
 			delete mallet1;
 			delete mallet2;
 		}
 
-		if(puck->load(std::string("puck.png"))) {
+		if(puck->load(std::string("kiekko.png"))) {
 
 			// Resize the Widget:
 			puck->resizeToFit(Nimble::Vector2(pucksize, pucksize));

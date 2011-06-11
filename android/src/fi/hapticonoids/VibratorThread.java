@@ -9,7 +9,7 @@ import android.util.Log;
 
 /**
  * Class realizing the thread to process vibration events.
- * @author Veli-Pekka Kestil�, Markus Penttil�
+ * @author Veli-Pekka Kestila, Markus Penttila
  *
  */
 public final class VibratorThread extends Thread implements MessageEater {
@@ -22,6 +22,9 @@ public final class VibratorThread extends Thread implements MessageEater {
 	//public static final int[] VIBRATION_LENGTH = {0, 200, 400, 600, 800, 1000};
 	
 	private ArrayList<VibrationPattern> patterns;
+	
+	// first value off, second value on, third off etc.
+	private static final long[][] VIBRATION_PATTERNS = {{0}, {0,200}, {0,100,50,100}, {0,400,200,400}};
 	
 	/**
 	 * Constructor accepting the vibration resource and the main activity.
@@ -91,14 +94,14 @@ public final class VibratorThread extends Thread implements MessageEater {
 	public synchronized void doTask(final int id) {
 		this.msgQueue.post(new Runnable() {
 			public void run() {
-				hapticonoids.setInfoText("Vibrating!");
+				//hapticonoids.setInfoText("Vibrating!");
 				Log.i("Hapticonoids::VibratorThread","Vibrate!");
 				int vibrate_idx = 0;
-				if(id >= 0 && id < patterns.size()){
+				if(id >= 0 && id < VIBRATION_PATTERNS.length){
 					vibrate_idx = id;
 				}
-				VibrationPattern pattern = patterns.get(vibrate_idx);
-				for(VibrationType type : pattern.getSequence()){
+				vibra.vibrate(VIBRATION_PATTERNS[vibrate_idx], -1);
+				/*for(VibrationType type : pattern.getSequence()){
 					try{
 						if(type.vibrate){
 							vibra.vibrate(type.length);
@@ -113,7 +116,7 @@ public final class VibratorThread extends Thread implements MessageEater {
 						// Do nothing
 					}
 				}
-				
+				*/
 			}
 		});
 	}
